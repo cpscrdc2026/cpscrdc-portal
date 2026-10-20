@@ -146,8 +146,8 @@ function normalizeState(){appState.debates.forEach(d=>{if(!d.format)d.format="As
 function roundScore(n){return Math.round((Number(n)||0)*10)/10;}
 function audit(action,details){if(!Array.isArray(appState.auditLog))appState.auditLog=[];appState.auditLog.unshift({id:Date.now()+Math.random(),action,details:String(details||""),user:appState.currentUser?appState.currentUser.displayName:"System / Public",at:new Date().toISOString()});appState.auditLog=appState.auditLog.slice(0,300);}
 appState.scripts.forEach(s=>{if(!s.role)s.role="General / All Roles"});
-const SUPABASE_URL="YOUR_PROJECT_URL";
-const SUPABASE_KEY="YOUR_PUBLISHABLE_KEY";
+const SUPABASE_URL="https://syxywkaccrpwaprxddha.supabase.co/rest/v1/";
+const SUPABASE_KEY="sb_publishable_D0aTK-zXMl-Dr1eVcNMbSQ_A6Zsl706";
 let sb=null,sbError="";
 try{if(typeof supabase==="undefined")throw new Error("Supabase library could not load (check internet connection).");if(!/^https:\/\/.+\.supabase\.co/.test(SUPABASE_URL)||SUPABASE_KEY.startsWith("YOUR_"))throw new Error("Setup incomplete: put your Supabase URL and key in index.html.");sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);sb.auth.onAuthStateChange(ev=>{if(ev==="PASSWORD_RECOVERY")recoverPassword()})}catch(e){sbError=e.message;console.error(e)}
 let saveTimer=null,remoteLoaded=false;
