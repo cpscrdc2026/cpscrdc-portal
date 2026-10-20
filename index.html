@@ -337,7 +337,7 @@ function renderHome(){
 }
 function leaderboardManagementButtons(x){
  if(!isEditor())return "";
- return `<td><div class="actions"><button class="btn secondary small" onclick="editMember(${Number(x.id)})">Edit</button><button class="btn ${x.active?"gold":""} small" onclick="toggleMember(${Number(x.id)})">${x.active?"Deactivate":"Activate"}</button><button class="btn ${x.excludedFromLeaderboard?"":"danger"} small" onclick="toggleLeaderboardExclusion(${Number(x.id)})">${x.excludedFromLeaderboard?"Restore ranking":"Remove from leaderboard"}</button></div></td>`;
+ return `<td><div class="actions"><button class="btn secondary small" onclick="editMember(${Number(x.id)})">Edit</button><button class="btn ${x.active?"gold":""} small" onclick="toggleMember(${Number(x.id)})">${x.active?"Deactivate":"Activate"}</button><button class="btn ${x.excludedFromLeaderboard?"":"danger"} small" onclick="toggleLeaderboardExclusion(${Number(x.id)})">${x.excludedFromLeaderboard?"Restore ranking":"Remove from leaderboard"}</button><button class="btn danger small" onclick="deleteMember(${Number(x.id)})">Delete</button></div></td>`;
 }
 function toggleLeaderboardExclusion(id){
  if(!isEditor()){notify("Editor access is required.");return;}
@@ -371,7 +371,7 @@ function renderMotions(){
  const cats=[...new Set(appState.motions.map(m=>m.category).filter(Boolean))].sort();if(catEl){const old=catEl.value||"all";catEl.innerHTML='<option value="all">All categories</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");catEl.value=cats.includes(old)||old==="all"?old:"all";}
  const cat=catEl?.value||"all",status=statusEl?.value||"all";
  const list=appState.motions.filter(m=>[m.text,m.category,m.info,m.status].some(v=>String(v||"").toLowerCase().includes(q))&&(cat==="all"||m.category===cat)&&(status==="all"||m.status===status));
- document.getElementById("motions-grid").innerHTML=list.length?list.map(m=>`<article class="card"><div class="card-top"><span class="pill blue">${esc(m.category)}</span><span class="pill ${m.status==="Debated"?"gold":""}">${esc(m.status)}</span></div><h3>“${esc(m.text)}”</h3><p class="info-box">Info Slide: ${esc(m.info||"No info slide supplied.")}</p><div class="card-meta">${esc(m.format||"Asian Parliamentary")} · ${esc(m.difficulty||"Open difficulty")}</div><div class="actions"><button class="btn secondary small" onclick="viewMotionDetail(${Number(m.id)})">View Details</button>${isEditor()?`<button class="btn secondary small" onclick="editMotion(${Number(m.id)})">Edit Motion</button><button class="btn small" onclick="markMotionDebated(${Number(m.id)})" ${m.status==="Debated"?"disabled":""}>${m.status==="Debated"?"Marked Debated":"Mark as Debated"}</button><button class="btn gold small" onclick="startResultForMotion(${Number(m.id)})">Add Debate Result</button>`:""}</div></article>`).join(""):'<div class="empty" style="grid-column:1/-1">No motions match your filters.</div>';
+ document.getElementById("motions-grid").innerHTML=list.length?list.map(m=>`<article class="card"><div class="card-top"><span class="pill blue">${esc(m.category)}</span><span class="pill ${m.status==="Debated"?"gold":""}">${esc(m.status)}</span></div><h3>“${esc(m.text)}”</h3><p class="info-box">Info Slide: ${esc(m.info||"No info slide supplied.")}</p><div class="card-meta">${esc(m.format||"Asian Parliamentary")} · ${esc(m.difficulty||"Open difficulty")}</div><div class="actions"><button class="btn secondary small" onclick="viewMotionDetail(${Number(m.id)})">View Details</button>${isEditor()?`<button class="btn secondary small" onclick="editMotion(${Number(m.id)})">Edit Motion</button><button class="btn small" onclick="markMotionDebated(${Number(m.id)})" ${m.status==="Debated"?"disabled":""}>${m.status==="Debated"?"Marked Debated":"Mark as Debated"}</button><button class="btn gold small" onclick="startResultForMotion(${Number(m.id)})">Add Debate Result</button><button class="btn danger small" onclick="deleteMotion(${Number(m.id)})">Delete Motion</button>`:""}</div></article>`).join(""):'<div class="empty" style="grid-column:1/-1">No motions match your filters.</div>';
  if(isEditor())renderAdminMotionList();const addMotionButton=document.getElementById("motion-bank-actions");if(addMotionButton)addMotionButton.classList.toggle("hidden",!isEditor());
 }
 function viewMotionDetail(id){const m=appState.motions.find(x=>Number(x.id)===Number(id));if(!m)return;const results=appState.debates.filter(d=>Number(d.motionId)===Number(m.id));openDetailModal(m.text,`<p><span class="pill blue">${esc(m.category)}</span> <span class="pill">${esc(m.status)}</span></p><h3>Info slide</h3><p>${esc(m.info||"No additional information supplied.")}</p><p><b>Format:</b> ${esc(m.format||"Asian Parliamentary")}<br><b>Difficulty:</b> ${esc(m.difficulty||"Not specified")}</p><h3>Debate history</h3><p>${results.length?results.map(d=>`${esc(fmtDate(d.date))} — ${esc(d.result)} (${esc(d.format||"Asian Parliamentary")})`).join("<br>"):'No result recorded for this motion yet.'}</p>${isEditor()?`<div class="actions"><button class="btn secondary" onclick="editMotion(${Number(m.id)})">Edit Motion</button><button class="btn" onclick="markMotionDebated(${Number(m.id)})">Mark as Debated</button><button class="btn gold" onclick="startResultForMotion(${Number(m.id)})">Add Debate Result</button></div>`:""}`);}
@@ -582,7 +582,7 @@ function renderAdminSessionList(){
 function deleteSession(id){if(!isEditor())return;const x=appState.sessions.find(s=>Number(s.id)===Number(id));if(!x)return;if(!confirm("Delete this session?"))return;audit("Deleted session",x.title);appState.sessions=appState.sessions.filter(s=>Number(s.id)!==Number(id));saveState();renderAdminSessionList();renderCalendar();renderHome();notify("Calendar item deleted.")}
 function renderAdminMemberList(){
  const el=document.getElementById("admin-member-list");if(!el)return;
- el.innerHTML=appState.members.length?'<div class="stack">'+appState.members.map(m=>`<div class="card" style="padding:13px;display:flex;align-items:center;justify-content:space-between;gap:12px"><div><b>${esc(m.name)}</b><div class="card-meta">${m.active===false?"Inactive":"Active"} · ${m.excludedFromLeaderboard?"Excluded from leaderboard":"Included in leaderboard"} · ${calculateLeaderboardStats().find(x=>Number(x.id)===Number(m.id))?.debatesPlayed||0} debates</div></div><div class="actions"><button class="btn secondary small" onclick="editMember(${Number(m.id)})">Edit</button><button class="btn secondary small" onclick="toggleMember(${Number(m.id)})">${m.active===false?"Activate":"Deactivate"}</button><button class="btn ${m.excludedFromLeaderboard?"":"danger"} small" onclick="toggleLeaderboardExclusion(${Number(m.id)})">${m.excludedFromLeaderboard?"Restore ranking":"Remove from leaderboard"}</button></div></div>`).join("")+'</div>':'<div class="empty">No members yet.</div>';
+ el.innerHTML=appState.members.length?'<div class="stack">'+appState.members.map(m=>`<div class="card" style="padding:13px;display:flex;align-items:center;justify-content:space-between;gap:12px"><div><b>${esc(m.name)}</b><div class="card-meta">${m.active===false?"Inactive":"Active"} · ${m.excludedFromLeaderboard?"Excluded from leaderboard":"Included in leaderboard"} · ${calculateLeaderboardStats().find(x=>Number(x.id)===Number(m.id))?.debatesPlayed||0} debates</div></div><div class="actions"><button class="btn secondary small" onclick="editMember(${Number(m.id)})">Edit</button><button class="btn secondary small" onclick="toggleMember(${Number(m.id)})">${m.active===false?"Activate":"Deactivate"}</button><button class="btn ${m.excludedFromLeaderboard?"":"danger"} small" onclick="toggleLeaderboardExclusion(${Number(m.id)})">${m.excludedFromLeaderboard?"Restore ranking":"Remove from leaderboard"}</button><button class="btn danger small" onclick="deleteMember(${Number(m.id)})">Delete</button></div></div>`).join("")+'</div>':'<div class="empty">No members yet.</div>';
 }
 function toggleMember(id){if(!isEditor())return;const m=appState.members.find(x=>Number(x.id)===Number(id));if(!m)return;m.active=m.active===false;audit(m.active?"Activated member":"Deactivated member",m.name);saveState();renderAdmin();renderHome();renderLeaderboard();notify(m.name+" is now "+(m.active?"active":"inactive")+".")}
 function renderAdjustmentsList(){
@@ -734,6 +734,30 @@ document.getElementById("year").textContent=new Date().getFullYear();
 try{if(localStorage.getItem("cpscrdc_theme")==="dark"){document.body.classList.add("dark");document.getElementById("theme-toggle").textContent="☀"}}catch(e){}
 (async()=>{if(!sb){updateNavbarAuth();showPage(location.hash.slice(1)||"home",false);notify(sbError||"Not connected to the server.");return}
 await loadSession();await loadRemote();updateNavbarAuth();showPage(location.hash.slice(1)||"home",false);if(isEditor())refreshPeople();})();
+</script>
+<script>
+function deleteMotion(id){
+ if(!isEditor())return;
+ const m=appState.motions.find(x=>Number(x.id)===Number(id));if(!m)return;
+ const linked=appState.debates.filter(d=>Number(d.motionId)===Number(id));
+ const msg=linked.length?`Delete this motion AND its ${linked.length} recorded debate result(s) with scorecards? This will change member rankings and cannot be undone.`:"Delete this motion?";
+ if(!confirm(msg))return;
+ audit("Deleted motion",m.text+(linked.length?` (and ${linked.length} debate result(s))`:""));
+ appState.debates=appState.debates.filter(d=>Number(d.motionId)!==Number(id));
+ appState.motions=appState.motions.filter(x=>Number(x.id)!==Number(id));
+ saveState();closeDetailModal();renderAllPortalViews();notify("Motion deleted.");
+}
+async function deleteMember(id){
+ if(!isEditor())return;
+ const m=appState.members.find(x=>Number(x.id)===Number(id));if(!m)return;
+ const played=appState.debates.filter(d=>(d.participants||[]).some(p=>Number(p.memberId)===Number(id))).length;
+ const msg=played?`Permanently delete ${m.name}? They appear in ${played} recorded debate(s). Their name will show as "Removed member" in those results and they will leave the leaderboard. This cannot be undone. (To keep their history, use "Remove from leaderboard" instead.)`:`Permanently delete ${m.name}?`;
+ if(!confirm(msg))return;
+ appState.members=appState.members.filter(x=>Number(x.id)!==Number(id));
+ audit("Deleted member",m.name);saveState();
+ if(sb){try{await sb.from("profiles").update({member_id:null}).eq("member_id",Number(id))}catch(e){}}
+ renderAllPortalViews();notify(m.name+" deleted.");
+}
 </script>
 </body>
 </html>
