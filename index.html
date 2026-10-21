@@ -939,11 +939,11 @@ function editMember(id){if(!isEditor())return;const m=appState.members.find(x=>N
 function editDebate(id){
  if(!isEditor())return;const d=appState.debates.find(x=>Number(x.id)===Number(id));if(!d)return;
  document.getElementById("edit-debate-id").value=String(d.id);document.getElementById("edit-debate-date").value=d.date||"";document.getElementById("edit-debate-result").value=d.result||"Draw";document.getElementById("edit-debate-format").value=d.format||"Asian Parliamentary";document.getElementById("edit-debate-season").value=d.season||String(d.date||"").slice(0,4);document.getElementById("edit-debate-gov").value=d.govTeam||"";document.getElementById("edit-debate-opp").value=d.oppTeam||"";
- document.getElementById("edit-debate-motion").innerHTML=appState.motions.map(m=>`<option value="${m.id}">${esc(m.text)}</option>`).join("");document.getElementById("edit-debate-motion").value=String(d.motionId);document.getElementById("edit-debate-judges").value=debateJudgeCount(d);const wrap=document.getElementById("edit-debate-participants");wrap.innerHTML="";(Array.isArray(d.participants)?d.participants:[]).forEach(p=>addEditDebaterRow(p));document.getElementById("debate-edit-modal").classList.add("open");
+ document.getElementById("edit-debate-motion").innerHTML=appState.motions.map(m=>`<option value="${m.id}">${esc(m.text)}</option>`).join("");document.getElementById("edit-debate-motion").value=String(d.motionId);document.getElementById("edit-debate-judges").value=debateJudgeCount(d);const wrap=document.getElementById("edit-debate-participants");wrap.innerHTML="";const savedParticipants=Array.isArray(d.participants)?d.participants:[];if(savedParticipants.length)savedParticipants.forEach(p=>addEditDebaterRow(p));else addEditDebaterRow();document.getElementById("debate-edit-modal").classList.add("open");
 }
 function closeDebateEditor(){document.getElementById("debate-edit-modal").classList.remove("open")}
 function addEditDebaterRow(participant={}){
- const wrap=document.getElementById("edit-debate-participants");if(!appState.members.length){notify("Add a member before adding a debater.");return}const row=document.createElement("div");row.className="score-row score-component-row score-row-stack";
+ const wrap=document.getElementById("edit-debate-participants");if(!wrap){notify("Debater scorecard editor is not available.");return}if(!appState.members.length){notify("Add a member before adding a debater.");return}const row=document.createElement("div");row.className="score-row score-component-row score-row-stack";
  const memberOptions=appState.members.map(m=>`<option value="${m.id}" ${Number(m.id)===Number(participant.memberId)?"selected":""}>${esc(m.name)}${m.active===false?" (inactive)":""}</option>`).join("");
  const role=scoringRole(participant.role)||SCORING_ROLES[0];
  const legacyNote=(participant.memberId!==undefined&&!participant.criteria)?`<div class="notice" style="grid-column:1/-1">This is an older Matter/Manner/Method score. The total was spread across the new criteria — please review and adjust each one.</div>`:"";
@@ -955,7 +955,7 @@ async function saveDebateEditor(event){
  const id=Number(document.getElementById("edit-debate-id").value),d=appState.debates.find(x=>Number(x.id)===id);if(!d)return;
  const date=document.getElementById("edit-debate-date").value,motionId=Number(document.getElementById("edit-debate-motion").value),result=document.getElementById("edit-debate-result").value;
  if(!date||!appState.motions.some(m=>Number(m.id)===motionId)){notify("Choose a valid date and motion.");return}
- const rows=[...document.querySelectorAll("#edit-debate-participants .score-row")];
+ const participantWrap=document.getElementById("edit-debate-participants");const rows=[...participantWrap.children].filter(el=>el.classList.contains("score-row"));
  if(!rows.length){notify("A debate must have at least one debater score.");return}
  const participants=[],seen=new Set();
  for(const row of rows){
