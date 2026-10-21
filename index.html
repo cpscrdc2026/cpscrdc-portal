@@ -393,13 +393,14 @@ try{if(typeof supabase==="undefined")throw new Error("Supabase library could not
 let saveTimer=null,remoteLoaded=false;
 function saveState(){clearTimeout(saveTimer);saveTimer=setTimeout(pushState,400);return true}
 async function pushState(){
-  if(!isEditor()||!remoteLoaded)return;
+  if(!isEditor()||!remoteLoaded||!sb){notify("Save unavailable: editor session or server connection is not ready.");return false}
   const s=appState;
   const {error}=await sb.from("portal_state").upsert([
     {key:"public",data:{members:s.members,motions:s.motions,debates:s.debates,adjustments:s.adjustments,sessions:s.sessions,achievements:s.achievements}},
     {key:"scripts",data:s.scripts},
     {key:"audit",data:s.auditLog}]);
-  if(error)notify("Save failed: "+error.message);
+  if(error){notify("Save failed: "+error.message);console.error("Portal state save failed",error);return false}
+  return true;
 }
 async function loadRemote(){
   const {data,error}=await sb.from("portal_state").select("key,data");
@@ -774,8 +775,11 @@ function debaterOptionsHtml(selectedId,query){
  const q=String(query||"").trim().toLowerCase();
  const list=appState.members.filter(m=>!q||String(m.name).toLowerCase().includes(q));
  if(!list.length)return '<option value="" disabled selected>No debater found</option>';
- const sel=list.some(m=>Number(m.id)===Number(selectedId))?Number(selectedId):Number(list[0].id);
- return list.map(m=>`<option value="${m.id}" ${Number(m.id)===sel?"selected":""}>${esc(m.name)}${m.active===false?" (inactive)":""}</option>`).join("");
+ const hasSelection=selectedId!==undefined&&selectedId!==null&&String(selectedId)!=="";
+ const found=hasSelection&&list.some(m=>Number(m.id)===Number(selectedId));
+ const sel=found?Number(selectedId):(hasSelection&&q?Number(list[0].id):null);
+ const placeholder=(!hasSelection&&!q)?'<option value="" selected disabled>Choose a debater…</option>':"";
+ return placeholder+list.map(m=>`<option value="${m.id}" ${Number(m.id)===sel?"selected":""}>${esc(m.name)}${m.active===false?" (inactive)":""}</option>`).join("");
 }
 function debaterPickerHtml(cls,selectedId){
  return `<div class="debater-picker"><input type="search" class="input picker-search" placeholder="🔍 Search debater by name…" aria-label="Search debater" oninput="filterDebaterPicker(this)" onkeydown="if(event.key==='Enter')event.preventDefault()"><select class="${cls}" aria-label="Debater" required>${debaterOptionsHtml(selectedId,"")}</select><span class="picker-count"></span></div>`;
@@ -946,12 +950,31 @@ function addEditDebaterRow(participant={}){
  row.innerHTML=`<div class="score-person"><label>Debater</label>${debaterPickerHtml("edit-participant-member",participant.memberId)}<label style="margin-top:7px">Role</label><select class="edit-participant-role" aria-label="Debate role" onchange="swapCriteria(this,'.score-row')">${roleOptionsHtml(role)}</select></div>${legacyNote}${criteriaBoxHtml(role,participantJudges(participant),clampJudges(document.getElementById("edit-debate-judges").value))}<button type="button" class="btn danger small" onclick="this.closest('.score-row').remove()">Remove</button>`;wrap.appendChild(row);
 }
 function updateEditScoreTotal(input){updateCriteriaTotal(input)}
-function saveDebateEditor(event){
- event.preventDefault();if(!isEditor())return;const id=Number(document.getElementById("edit-debate-id").value),d=appState.debates.find(x=>Number(x.id)===id);if(!d)return;
- const date=document.getElementById("edit-debate-date").value,motionId=Number(document.getElementById("edit-debate-motion").value),result=document.getElementById("edit-debate-result").value;if(!date||!appState.motions.some(m=>Number(m.id)===motionId)){notify("Choose a valid date and motion.");return}
- const rows=[...document.querySelectorAll("#edit-debate-participants .score-row")];if(!rows.length){notify("A debate must have at least one debater score.");return}const participants=[],seen=new Set();for(const row of rows){const memberId=Number(row.querySelector(".edit-participant-member").value),role=row.querySelector(".edit-participant-role").value;if(!memberId){notify("Choose a debater for every score row.");return}const res=readCriteria(row.querySelector(".criteria-box"),role);if(res.error){notify(res.error);return}if(seen.has(memberId)){notify("A debater can appear only once in a scorecard.");return}seen.add(memberId);participants.push({memberId,role,criteria:res.criteria,score:res.score,judges:res.judges});}
- const previousMotion=appState.motions.find(m=>Number(m.id)===Number(d.motionId));if(previousMotion&&Number(previousMotion.id)!==motionId&&previousMotion.autoDebated===true&&!appState.debates.some(x=>Number(x.id)!==id&&Number(x.motionId)===Number(previousMotion.id))){previousMotion.status="Upcoming";previousMotion.autoDebated=false;}
- Object.assign(d,{date,motionId,result,format:document.getElementById("edit-debate-format").value,season:document.getElementById("edit-debate-season").value.trim()||date.slice(0,4),govTeam:document.getElementById("edit-debate-gov").value.trim(),oppTeam:document.getElementById("edit-debate-opp").value.trim(),judgeCount:clampJudges(document.getElementById("edit-debate-judges").value),participants});const motion=appState.motions.find(m=>Number(m.id)===motionId);if(motion)motion.status="Debated";audit("Edited debate",`${date} · ${motion?.text||"Motion"} · ${participants.length} speaker scorecards`);saveState();closeDebateEditor();renderResults();renderAdmin();renderAdminDebateScores();renderLeaderboard();renderHome();renderMemberDashboardIfVisible();notify("Debate, teams and all scorecards updated.");
+async function saveDebateEditor(event){
+ event.preventDefault();if(!isEditor())return;
+ const id=Number(document.getElementById("edit-debate-id").value),d=appState.debates.find(x=>Number(x.id)===id);if(!d)return;
+ const date=document.getElementById("edit-debate-date").value,motionId=Number(document.getElementById("edit-debate-motion").value),result=document.getElementById("edit-debate-result").value;
+ if(!date||!appState.motions.some(m=>Number(m.id)===motionId)){notify("Choose a valid date and motion.");return}
+ const rows=[...document.querySelectorAll("#edit-debate-participants .score-row")];
+ if(!rows.length){notify("A debate must have at least one debater score.");return}
+ const participants=[],seen=new Set();
+ for(const row of rows){
+  const memberId=Number(row.querySelector(".edit-participant-member").value),role=row.querySelector(".edit-participant-role").value;
+  if(!memberId){notify("Choose a debater for every score row. New rows start blank so each debater can be selected individually.");return}
+  const res=readCriteria(row.querySelector(".criteria-box"),role);if(res.error){notify(res.error);return}
+  if(seen.has(memberId)){notify("The same debater is selected more than once. Choose a different debater in each row.");return}
+  seen.add(memberId);participants.push({memberId,role,criteria:res.criteria,score:res.score,max:roleMax(role),judges:res.judges});
+ }
+ const previousMotion=appState.motions.find(m=>Number(m.id)===Number(d.motionId));
+ if(previousMotion&&Number(previousMotion.id)!==motionId&&previousMotion.autoDebated===true&&!appState.debates.some(x=>Number(x.id)!==id&&Number(x.motionId)===Number(previousMotion.id))){previousMotion.status="Upcoming";previousMotion.autoDebated=false;}
+ Object.assign(d,{date,motionId,result,format:document.getElementById("edit-debate-format").value,season:document.getElementById("edit-debate-season").value.trim()||date.slice(0,4),govTeam:document.getElementById("edit-debate-gov").value.trim(),oppTeam:document.getElementById("edit-debate-opp").value.trim(),judgeCount:clampJudges(document.getElementById("edit-debate-judges").value),participants});
+ const motion=appState.motions.find(m=>Number(m.id)===motionId);if(motion)motion.status="Debated";
+ audit("Edited debate",`${date} · ${motion?.text||"Motion"} · ${participants.length} speaker scorecards`);
+ clearTimeout(saveTimer);
+ const saved=await pushState();
+ if(!saved){notify("The changes are still in this editor session but were not confirmed saved to the server. Check your connection and try Save again.");return}
+ closeDebateEditor();renderResults();renderAdmin();renderAdminDebateScores();renderLeaderboard();renderHome();renderMemberDashboardIfVisible();
+ notify(`Debate and all ${participants.length} debater scorecards saved successfully.`);
 }
 
 function deleteDebate(id){if(!isEditor())return;const d=appState.debates.find(x=>Number(x.id)===Number(id));if(!d||!confirm("Delete this debate result and its scorecard? This will update member rankings."))return;audit("Deleted debate",`${d.date} · debate #${d.id}`);appState.debates=appState.debates.filter(x=>Number(x.id)!==Number(id));const motion=appState.motions.find(m=>Number(m.id)===Number(d.motionId));if(motion&&motion.autoDebated===true&&motion.manuallyMarkedDebated!==true&&!appState.debates.some(x=>Number(x.motionId)===Number(motion.id))){motion.status="Upcoming";motion.autoDebated=false;}saveState();renderResults();renderLeaderboard();renderHome();renderAdmin();renderAdminDebateScores();renderMemberDashboardIfVisible();notify("Debate result deleted.")}
