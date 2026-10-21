@@ -548,19 +548,18 @@ function renderHomeSchedule(){
  const eventsEl=document.getElementById("home-upcoming-events");
  if(!debateEl||!eventsEl)return;
  const today=localISODate(new Date());
- // Home is an editor-curated showcase: only future calendar items explicitly marked Featured appear.
- // No weekly cutoff and no automatic top-N selection; the Calendar controls the Home sections.
- const featured=(Array.isArray(appState.sessions)?appState.sessions:[])
-   .filter(s=>validISODate(s.date)&&s.date>=today&&s.featured===true)
-   .sort((a,b)=>String(a.date).localeCompare(String(b.date))||String(a.title).localeCompare(String(b.title)));
- const debates=featured.filter(s=>sessionType(s)==="Debate");
- const events=featured.filter(s=>sessionType(s)!=="Debate");
+ // Every upcoming calendar item appears automatically. Editor-featured items are prioritized.
+ const upcoming=(Array.isArray(appState.sessions)?appState.sessions:[])
+   .filter(s=>validISODate(s.date)&&s.date>=today)
+   .sort((a,b)=>(Number(b.featured===true)-Number(a.featured===true))||String(a.date).localeCompare(String(b.date))||String(a.title).localeCompare(String(b.title)));
+ const debates=upcoming.filter(s=>sessionType(s)==="Debate").slice(0,5);
+ const events=upcoming.filter(s=>sessionType(s)!=="Debate").slice(0,5);
  debateEl.innerHTML=debates.length
-   ?debates.map(scheduleItemHTML).join("")
-   :`<div class="empty">No debates have been selected for the Home page yet. An editor can open Calendar, find an upcoming debate, and choose “Feature on Home.”</div>`;
+   ?debates.map(s=>scheduleItemHTML(s)).join("")
+   :`<div class="empty">No upcoming debates are scheduled. Add a debate in Calendar to show it here automatically.</div>`;
  eventsEl.innerHTML=events.length
-   ?events.map(s=>`<article class="card"><div class="card-top"><span class="pill ${sessionType(s)==="Tournament"?"gold":"blue"}">${esc(sessionType(s))} · Featured</span><span class="card-meta">${fmtDate(s.date)}</span></div><h3>${esc(s.title)}</h3><p class="card-meta">📍 ${esc(s.location||"Location to be announced")}</p>${s.notes?`<p class="subtle">${esc(s.notes)}</p>`:""}<div class="actions"><button class="btn secondary small" onclick="openCalendarSchedule('events')">Open Calendar →</button></div></article>`).join("")
-   :`<div class="empty" style="grid-column:1/-1">No events have been selected for the Home page yet. An editor can open Calendar, find an upcoming event, and choose “Feature on Home.”</div>`;
+   ?events.map(s=>`<article class="card"><div class="card-top"><span class="pill ${sessionType(s)==="Tournament"?"gold":"blue"}">${esc(sessionType(s))}${s.featured===true?" · ★ Featured":""}</span><span class="card-meta">${fmtDate(s.date)}</span></div><h3>${esc(s.title)}</h3><p class="card-meta">📍 ${esc(s.location||"Location to be announced")}</p>${s.notes?`<p class="subtle">${esc(s.notes)}</p>`:""}<div class="actions"><button class="btn secondary small" onclick="openCalendarSchedule('events')">Open Calendar →</button></div></article>`).join("")
+   :`<div class="empty" style="grid-column:1/-1">No upcoming events are scheduled. Add an event in Calendar to show it here automatically.</div>`;
 }
 function openCalendarSchedule(filter="all"){switchPage("calendar");const select=document.getElementById("calendar-type-filter");if(select){select.value=filter;renderCalendar();}document.getElementById("page-calendar")?.scrollIntoView({behavior:"smooth",block:"start"});}
 
