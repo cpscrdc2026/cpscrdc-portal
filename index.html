@@ -236,7 +236,7 @@ function loadState(){
 }
 let appState=loadState();
 let toastTimer=null;
-function normalizeState(){if(!Array.isArray(appState.achievements))appState.achievements=[];appState.debates.forEach(d=>{if(!d.format)d.format="Asian Parliamentary";if(!d.season)d.season=String((d.date||new Date().toISOString()).slice(0,4));(d.participants||[]).forEach(p=>{const mapped=scoringRole(p.role);if(mapped&&mapped!==p.role)p.role=mapped;if(p.criteria&&mapped){if(Array.isArray(p.judges)&&p.judges.length){p.score=round2(p.judges.reduce((a,j)=>a+(Number(j.score)||0),0)/p.judges.length)}else{p.score=round2(Object.values(p.criteria).reduce((a,v)=>a+(Number(v)||0),0))}}else{if(!Number.isFinite(Number(p.score))){p.score=roundScore((Number(p.matter)||0)+(Number(p.manner)||0)+(Number(p.method)||0));}}});});appState.scripts.forEach(s=>{if(!s.role)s.role="General / All Roles"});}normalizeState();
+function normalizeState(){if(!Array.isArray(appState.achievements))appState.achievements=[];appState.debates.forEach(d=>{if(!d.format)d.format="Asian Parliamentary";if(!d.season)d.season=String((d.date||new Date().toISOString()).slice(0,4));(d.participants||[]).forEach(p=>{const mapped=scoringRole(p.role);if(mapped&&mapped!==p.role)p.role=mapped;if(p.criteria&&mapped){if(Array.isArray(p.judges)&&p.judges.length){p.score=round2(p.judges.reduce((a,j)=>a+(Number(j.score)||0),0)/p.judges.length)}else{p.score=round2(Object.values(p.criteria).reduce((a,v)=>a+(Number(v)||0),0))}}else{if(!Number.isFinite(Number(p.score))){p.score=roundScore((Number(p.matter)||0)+(Number(p.manner)||0)+(Number(p.method)||0));}}});});appState.scripts.forEach(s=>{if(!s.role)s.role="General / All Roles"});}
 function roundScore(n){return Math.round((Number(n)||0)*100)/100;}
 function round2(n){return Math.round((Number(n)||0)*100)/100}
 function fmt2(n){return (Math.round((Number(n)||0)*100)/100).toFixed(2)}
@@ -296,6 +296,7 @@ const SCORING_CONFIG={
 const SCORING_ROLES=Object.keys(SCORING_CONFIG);
 const LEGACY_ROLE_MAP={"Deputy Prime Minister":"Cabinet Minister","Government Whip":"Government Member","Member of Government":"Government Member","Opposition Deputy Leader":"Deputy Leader of Opposition","Opposition Whip":"Opposition Member","Member of Opposition":"Opposition Member"};
 function scoringRole(role){const r=String(role||"");if(SCORING_CONFIG[r])return r;return LEGACY_ROLE_MAP[r]||null}
+normalizeState();
 function roleMax(role){const k=scoringRole(role);return k?SCORING_CONFIG[k].max:100}
 function participantMax(p){return p&&p.criteria&&scoringRole(p.role)?roleMax(p.role):100}
 function participantPercent(p){const mx=participantMax(p);return mx?(Number(p.score)||0)/mx*100:0}
