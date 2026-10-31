@@ -1,6 +1,8 @@
 name: Format design refresh
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - design/club-identity-editorial-refresh
 permissions:
   contents: write
 jobs:
