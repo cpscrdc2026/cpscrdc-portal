@@ -1,0 +1,31 @@
+name: format-pr-branch
+
+on:
+  push:
+    branches:
+      - ui/mobile-responsive-refresh
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ui/mobile-responsive-refresh
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npx prettier --write index.html assets/js/portal.js assets/css/portal.css
+      - name: Commit formatting
+        run: |
+          if ! git diff --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add index.html assets/js/portal.js assets/css/portal.css
+            git commit -m "Format responsive portal updates"
+            git push
+          fi
