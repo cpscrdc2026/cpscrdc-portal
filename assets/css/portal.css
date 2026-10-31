@@ -2111,7 +2111,6 @@ body.dark .member-score-details > summary {
   }
 }
 
-
 /* Keep leaderboard filters compact on phones so rankings stay in view. */
 @media (max-width: 640px) {
   #page-leaderboard > .panel.toolbar {
