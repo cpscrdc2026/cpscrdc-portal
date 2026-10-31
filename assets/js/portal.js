@@ -666,7 +666,7 @@ function scorecardTableHtml(parts, emptyMsg) {
     ? parts
         .map((p) => {
           const m = appState.members.find((x) => Number(x.id) === Number(p.memberId));
-          return `<tr><td>${esc(m ? m.name : "Removed member")}</td><td>${esc(p.role || " · ")}</td><td class="criteria-cell">${criteriaSummary(p)}</td><td><b>${fmt2(p.score)}/${participantMax(p)}</b></td></tr>`;
+          return `<tr><td>${esc(m ? m.name : "Removed member")}</td><td>${esc("p.role || "Not recorded")}</td><td class="criteria-cell">${criteriaSummary(p)}</td><td><b>${fmt2(p.score)}/${participantMax(p)}</b></td></tr>`;
         })
         .join("")
     : `<tr><td colspan="4">${emptyMsg}</td></tr>`;
@@ -1243,7 +1243,7 @@ function renderHome() {
     ? rows
         .map(
           (x, i) =>
-            `<tr><td class="rank">#${i + 1}</td><td>${esc(x.name)}</td><td>${x.debatesPlayed}</td><td class="green">${x.average === null ? " · " : fmt2(x.average) + "%"}</td><td>${fmt2(x.totalPoints)} pts</td></tr>`,
+            `<tr><td class="rank">#${i + 1}</td><td>${esc(x.name)}</td><td>${x.debatesPlayed}</td><td class="green">${x.average === null ? "Not available" : fmt2(x.average) + "%"}</td><td>${fmt2(x.totalPoints)} pts</td></tr>`,
         )
         .join("")
     : emptyRow(homeLimit, "No debater records yet.");
@@ -3278,7 +3278,7 @@ function renderMemberDashboard() {
     ? '<button class="btn secondary small" onclick="returnToAdminMembers()">Back to Members</button>'
     : '<button class="btn secondary small" onclick="switchPage(\'results\')">All Results</button>';
   const breakdownOpen = window.matchMedia("(min-width: 641px)").matches ? " open" : "";
-  el.innerHTML = `<div class="stats"><div class="stat"><div><strong>${esc(displayName)}</strong><span>${adminViewing ? "Admin view · " : "Signed in as "}${esc(user.role)}</span></div></div><div class="stat"><div><strong>${stats ? stats.debatesPlayed : 0}</strong><span>Debates recorded</span></div></div><div class="stat"><div><strong>${stats && stats.average !== null ? fmt2(stats.average) + "%" : " · "}</strong><span>Average score</span></div></div><div class="stat"><div><strong>${stats ? fmt2(stats.totalPoints) : "0.00"}</strong><span>Total points</span></div></div></div><div class="panel"><div class="panel-head member-dashboard-head"><h3>${historyTitle}</h3><div class="actions">${historyAction}</div></div>${
+  el.innerHTML = `<div class="stats"><div class="stat"><div><strong>${esc(displayName)}</strong><span>${adminViewing ? "Admin view · " : "Signed in as "}${esc(user.role)}</span></div></div><div class="stat"><div><strong>${stats ? stats.debatesPlayed : 0}</strong><span>Debates recorded</span></div></div><div class="stat"><div><strong>${stats && stats.average !== null ? fmt2(stats.average) + "%" : "Not available"}</strong><span>Average score</span></div></div><div class="stat"><div><strong>${stats ? fmt2(stats.totalPoints) : "0.00"}</strong><span>Total points</span></div></div></div><div class="panel"><div class="panel-head member-dashboard-head"><h3>${historyTitle}</h3><div class="actions">${historyAction}</div></div>${
     linked && myDebates.length
       ? myDebates
           .map((d) => {
