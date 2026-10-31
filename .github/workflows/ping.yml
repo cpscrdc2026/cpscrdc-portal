@@ -8,5 +8,10 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Supabase Project
-        run: curl -s "https://syxywkaccrpwaprxddha.supabase.co/rest/v1/"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check Supabase Auth health
+        run: node scripts/ping-supabase.mjs
+
