@@ -915,8 +915,19 @@ function renderAdminMemberList(){
  const el=document.getElementById("admin-member-list");if(!el)return;
  const query=(document.getElementById("admin-member-search")?.value||"").trim().toLocaleLowerCase();
  const stats=calculateLeaderboardStats();
- const members=appState.members.filter(m=>!query||String(m.name||"").toLocaleLowerCase().includes(query));
- el.innerHTML=members.length?'<div class="stack">'+members.map(m=>`<div class="card" style="padding:13px;display:flex;align-items:center;justify-content:space-between;gap:12px"><div><b>${esc(m.name)}</b><div class="card-meta">${m.active===false?"Inactive":"Active"} · ${m.excludedFromLeaderboard?"Excluded from leaderboard":"Included in leaderboard"} · ${stats.find(x=>Number(x.id)===Number(m.id))?.debatesPlayed||0} debates</div></div><div class="actions"><button class="btn secondary small" onclick="editMember(${Number(m.id)})">Edit</button><button class="btn secondary small" onclick="toggleMember(${Number(m.id)})">${m.active===false?"Activate":"Deactivate"}</button><button class="btn ${m.excludedFromLeaderboard?"":"danger"} small" onclick="toggleLeaderboardExclusion(${Number(m.id)})">${m.excludedFromLeaderboard?"Restore ranking":"Remove from leaderboard"}</button><button class="btn danger small" onclick="deleteMember(${Number(m.id)})">Delete</button></div></div>`).join("")+'</div>':(appState.members.length?'<div class="empty">No debaters match this search.</div>':'<div class="empty">No members yet.</div>');
+ const members=appState.members.map(member=>{
+  const profiles=people.filter(profile=>{
+   if(!["member","editor"].includes(profile.role))return false;
+   if(profile.member_id!==null&&profile.member_id!==undefined&&profile.member_id!=="")return Number(profile.member_id)===Number(member.id);
+   return String(profile.display_name||"").trim().toLocaleLowerCase()===String(member.name||"").trim().toLocaleLowerCase();
+  });
+  const searchable=[member.name,...profiles.flatMap(profile=>[profile.display_name,profile.email])].join(" ").toLocaleLowerCase();
+  return {member,profiles,matched:!query||searchable.includes(query)};
+ }).filter(row=>row.matched);
+ el.innerHTML=members.length?'<div class="stack">'+members.map(({member:m,profiles})=>{
+  const dashboardButtons=profiles.map(profile=>{const label=profiles.length===1?"View Dashboard":`View ${esc(profile.display_name||profile.email||"Member")}`;return `<button class="btn gold small" onclick="viewAdminMemberDashboard(\'${esc(profile.id)}\')">${label}</button>`}).join("");
+  return `<div class="card" style="padding:13px;display:flex;align-items:center;justify-content:space-between;gap:12px"><div><b>${esc(m.name)}</b><div class="card-meta">${m.active===false?"Inactive":"Active"} · ${m.excludedFromLeaderboard?"Excluded from leaderboard":"Included in leaderboard"} · ${stats.find(x=>Number(x.id)===Number(m.id))?.debatesPlayed||0} debates</div></div><div class="actions">${dashboardButtons}<button class="btn secondary small" onclick="editMember(${Number(m.id)})">Edit</button><button class="btn secondary small" onclick="toggleMember(${Number(m.id)})">${m.active===false?"Activate":"Deactivate"}</button><button class="btn ${m.excludedFromLeaderboard?"":"danger"} small" onclick="toggleLeaderboardExclusion(${Number(m.id)})">${m.excludedFromLeaderboard?"Restore ranking":"Remove from leaderboard"}</button><button class="btn danger small" onclick="deleteMember(${Number(m.id)})">Delete</button></div></div>`;
+ }).join("")+'</div>':(appState.members.length?'<div class="empty">No debaters match this search.</div>':'<div class="empty">No members yet.</div>');
 }
 function toggleMember(id){if(!isEditor())return;const m=appState.members.find(x=>Number(x.id)===Number(id));if(!m)return;m.active=m.active===false;audit(m.active?"Activated member":"Deactivated member",m.name);saveState();renderAdmin();renderHome();renderLeaderboard();notify(m.name+" is now "+(m.active?"active":"inactive")+".")}
 function renderAdjustmentsList(){
@@ -1026,10 +1037,9 @@ function renderAdminUsers(){
  const opts=sel=>'<option value="">No linked debater</option>'+appState.members.map(m=>`<option value="${Number(m.id)}" ${Number(sel)===Number(m.id)?"selected":""}>${esc(m.name)}</option>`).join("");
  listEl.innerHTML=others.length?others.map(x=>{
   const id=esc(x.id);let btns;
-  const viewButton=(x.role==="member"||x.role==="editor")?`<button class="btn secondary small" onclick="viewAdminMemberDashboard(\'${id}\')">View Dashboard</button>`:"";
-  if(x.id===me)btns=`<span class="card-meta">This is you</span>${viewButton}`;
-  else if(x.role==="editor")btns=`${viewButton}<button class="btn secondary small" onclick="setPersonRole(\'${id}\',\'member\')">Remove Admin Rights</button><button class="btn danger small" onclick="setPersonRole(\'${id}\',\'rejected\')">Remove Access</button>`;
-  else if(x.role==="member")btns=`${viewButton}<button class="btn small" onclick="setPersonRole(\'${id}\',\'editor\')">Make Admin</button><button class="btn danger small" onclick="setPersonRole(\'${id}\',\'rejected\')">Remove Access</button>`;
+  if(x.id===me)btns=`<span class="card-meta">This is you</span>`;
+  else if(x.role==="editor")btns=`<button class="btn secondary small" onclick="setPersonRole(\'${id}\',\'member\')">Remove Admin Rights</button><button class="btn danger small" onclick="setPersonRole(\'${id}\',\'rejected\')">Remove Access</button>`;
+  else if(x.role==="member")btns=`<button class="btn small" onclick="setPersonRole(\'${id}\',\'editor\')">Make Admin</button><button class="btn danger small" onclick="setPersonRole(\'${id}\',\'rejected\')">Remove Access</button>`;
   else btns=`<button class="btn secondary small" onclick="setPersonRole(\'${id}\',\'member\')">Restore as Member</button>`;
   if((x.role==="member"||x.role==="editor")&&!x.member_id)btns=`<button class="btn gold small" onclick="addPersonAsDebater(\'${id}\')">Add to Debater List</button>`+btns;
   const link=x.role==="rejected"?"":`<div class="field" style="margin-top:10px"><label>Linked debater record</label><select class="input" onchange="linkPerson(\'${id}\',this.value)">${opts(x.member_id)}</select></div>`;
@@ -1044,7 +1054,7 @@ function viewAdminMemberDashboard(profileId){
  switchPage("member");
 }
 function openOwnMemberDashboard(){adminDashboardProfile=null;switchPage("member")}
-function returnToAdminUsers(){if(!isEditor()){switchPage("home");return}adminDashboardProfile=null;switchPage("admin");switchAdminTab("users")}
+function returnToAdminMembers(){if(!isEditor()){switchPage("home");return}adminDashboardProfile=null;switchPage("admin");switchAdminTab("members")}
 
 async function setPersonRole(id,role){
  if(!isEditor()||id===appState.currentUser.id)return;
@@ -1124,7 +1134,7 @@ function renderMemberDashboard(){
  const el=document.getElementById("member-dashboard-content");
  const displayName=linked?linked.name:(user.displayName||user.username||user.email||"Member");
  const historyTitle=adminViewing?`Debate History · ${esc(displayName)}`:"My Recent Debate Scorecards";
- const historyAction=adminViewing?'<button class="btn secondary small" onclick="returnToAdminUsers()">Back to Members &amp; Admins</button>':'<button class="btn secondary small" onclick="switchPage(\'results\')">All Results</button>';
+ const historyAction=adminViewing?'<button class="btn secondary small" onclick="returnToAdminMembers()">Back to Members</button>':'<button class="btn secondary small" onclick="switchPage(\'results\')">All Results</button>';
  const breakdownOpen=window.matchMedia("(min-width: 641px)").matches?" open":"";
  el.innerHTML=`<div class="stats"><div class="stat"><div><strong>${esc(displayName)}</strong><span>${adminViewing?"Admin view · ":"Signed in as "}${esc(user.role)}</span></div></div><div class="stat"><div><strong>${stats?stats.debatesPlayed:0}</strong><span>Debates recorded</span></div></div><div class="stat"><div><strong>${stats&&stats.average!==null?fmt2(stats.average)+"%":"—"}</strong><span>Average score</span></div></div><div class="stat"><div><strong>${stats?fmt2(stats.totalPoints):"0.00"}</strong><span>Total points</span></div></div></div><div class="panel"><div class="panel-head member-dashboard-head"><h3>${historyTitle}</h3><div class="actions">${historyAction}</div></div>${linked&&myDebates.length?myDebates.map(d=>{const m=appState.motions.find(x=>Number(x.id)===Number(d.motionId));const part=(d.participants||[]).find(p=>Number(p.memberId)===Number(linked.id));return `<article class="card member-history-card"><div class="card-top"><span class="card-meta">${fmtDate(d.date)} · ${esc(d.format||"Asian Parliamentary")} · Season ${esc(d.season||String(d.date||"").slice(0,4))}</span><span class="pill ${d.result==="Gov Win"?"":"blue"}">${esc(d.result)}</span></div><h4 class="member-history-motion">${esc(m?m.text:"Motion unavailable")}</h4><p class="member-history-score">Role: ${esc(part.role||"Not recorded")} · Score: <b>${fmt2(part.score)}/${participantMax(part)}</b> (${fmt2(participantPercent(part))}%)</p><details class="member-score-details"${breakdownOpen}><summary>Score breakdown</summary><div class="card-meta">${criteriaSummary(part)}</div></details></article>`}).join(""):'<div class="empty">No linked member record or scorecards found for this account yet. An editor can update the member name to match your account display name.</div>'}</div><div class="panel"><div class="panel-head"><h3>Training Resources</h3><button class="btn secondary small" onclick="switchPage(\'scripts\')">Open Scripts Library</button></div><p class="subtle">Access scripts, speaking frameworks, and adjudication notes from the Scripts Library.</p></div>`;
 }
