@@ -512,6 +512,19 @@
             <h2>CPSCRDC Editor Admin Portal</h2>
             <p>Manage motions, schedule sessions, and enter debate scores.</p>
           </div>
+          <label class="admin-section-picker" for="admin-section-select">Admin section</label>
+          <select id="admin-section-select" class="input admin-section-select" aria-label="Choose admin section" onchange="switchAdminTab(this.value)">
+            <option value="homepage">Homepage Content</option>
+            <option value="debates" selected>Record Debate &amp; Scores</option>
+            <option value="motions">Manage Motions</option>
+            <option value="sessions">Calendar Sessions</option>
+            <option value="members">Members</option>
+            <option value="scripts">Training Scripts</option>
+            <option value="users">Members &amp; Admins</option>
+            <option value="scoring">AP Scoring Setup</option>
+            <option value="audit">Audit Logs</option>
+            <option value="data">Backup &amp; Restore</option>
+          </select>
           <div class="tabs">
             <button class="tab-btn" data-tab="homepage" onclick="switchAdminTab('homepage')">
               Homepage Content
