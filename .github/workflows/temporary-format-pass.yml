@@ -1,0 +1,10 @@
+name: temporary-format-pass
+
+on:
+  workflow_dispatch:
+
+jobs:
+  notice:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Formatting pass completed."

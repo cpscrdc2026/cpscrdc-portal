@@ -3236,7 +3236,6 @@ body.dark .home-introduction .eyebrow {
   }
 }
 
-
 /* Editorial design pass. Distinct type, stronger hierarchy, and consistent portal surfaces. */
 :root {
   --font-body: "DM Sans", "Aptos", "Segoe UI", system-ui, sans-serif;
@@ -3253,7 +3252,14 @@ textarea {
 body {
   letter-spacing: -0.018em;
 }
-h1, h2, h3, h4, .brand h1, .stat strong, .section-title, .admin-head h2 {
+h1,
+h2,
+h3,
+h4,
+.brand h1,
+.stat strong,
+.section-title,
+.admin-head h2 {
   font-family: var(--font-display);
 }
 .hero {
@@ -3263,7 +3269,12 @@ h1, h2, h3, h4, .brand h1, .stat strong, .section-title, .admin-head h2 {
   overflow: hidden;
   padding: clamp(42px, 7vw, 94px);
   background:
-    linear-gradient(90deg, rgba(10, 7, 48, .98) 0%, rgba(23, 16, 91, .94) 58%, rgba(23, 16, 91, .72) 100%),
+    linear-gradient(
+      90deg,
+      rgba(10, 7, 48, 0.98) 0%,
+      rgba(23, 16, 91, 0.94) 58%,
+      rgba(23, 16, 91, 0.72) 100%
+    ),
     url("./assets/images/club-logo.jpg") no-repeat 92% 50% / min(38vw, 420px) auto,
     #17105b;
 }
@@ -3274,11 +3285,15 @@ h1, h2, h3, h4, .brand h1, .stat strong, .section-title, .admin-head h2 {
   inset: auto -7% -46% auto;
   width: min(60vw, 680px);
   aspect-ratio: 1;
-  border: 1px solid rgba(244, 197, 66, .26);
+  border: 1px solid rgba(244, 197, 66, 0.26);
   border-radius: 50%;
-  box-shadow: 0 0 0 34px rgba(244,197,66,.035), 0 0 0 72px rgba(244,197,66,.025);
+  box-shadow:
+    0 0 0 34px rgba(244, 197, 66, 0.035),
+    0 0 0 72px rgba(244, 197, 66, 0.025);
 }
-.hero:after { content: none; }
+.hero:after {
+  content: none;
+}
 .hero-content {
   max-width: 850px;
   position: relative;
@@ -3288,11 +3303,11 @@ h1, h2, h3, h4, .brand h1, .stat strong, .section-title, .admin-head h2 {
   display: inline-flex;
   align-items: center;
   padding: 9px 12px;
-  border: 1px solid rgba(244,197,66,.38);
-  background: rgba(244,197,66,.08);
+  border: 1px solid rgba(244, 197, 66, 0.38);
+  background: rgba(244, 197, 66, 0.08);
   border-radius: 2px;
   font-size: 10px;
-  letter-spacing: .2em;
+  letter-spacing: 0.2em;
 }
 .hero .eyebrow:before {
   display: none;
@@ -3306,8 +3321,8 @@ h1, h2, h3, h4, .brand h1, .stat strong, .section-title, .admin-head h2 {
   font-family: var(--font-display);
   font-size: clamp(56px, 8.2vw, 104px);
   font-weight: 700;
-  line-height: .91;
-  letter-spacing: -.085em;
+  line-height: 0.91;
+  letter-spacing: -0.085em;
 }
 .hero-display span:last-child {
   color: var(--gold);
@@ -3317,9 +3332,15 @@ h1, h2, h3, h4, .brand h1, .stat strong, .section-title, .admin-head h2 {
   font-size: clamp(15px, 1.45vw, 18px);
   line-height: 1.75;
 }
-main { max-width: 1400px; }
-.stack { gap: 28px; }
-.stats { gap: 14px; }
+main {
+  max-width: 1400px;
+}
+.stack {
+  gap: 28px;
+}
+.stats {
+  gap: 14px;
+}
 .stat {
   min-height: 116px;
   align-items: center;
@@ -3329,7 +3350,12 @@ main { max-width: 1400px; }
 .stat strong {
   font-size: clamp(28px, 3vw, 38px);
 }
-.panel, .card, .stat, .home-introduction, .admin-head, .modal {
+.panel,
+.card,
+.stat,
+.home-introduction,
+.admin-head,
+.modal {
   border-radius: 5px;
 }
 .panel {
@@ -3371,10 +3397,19 @@ textarea {
   padding: clamp(25px, 4vw, 42px);
   border-left: 5px solid var(--gold);
 }
-.admin-head h2 { font-size: clamp(27px, 3vw, 38px); }
-.tabs { gap: 8px; }
-.tab-btn { padding: 11px 16px; font-weight: 750; }
-.admin-tab .panel { box-shadow: var(--shadow); }
+.admin-head h2 {
+  font-size: clamp(27px, 3vw, 38px);
+}
+.tabs {
+  gap: 8px;
+}
+.tab-btn {
+  padding: 11px 16px;
+  font-weight: 750;
+}
+.admin-tab .panel {
+  box-shadow: var(--shadow);
+}
 .member-dashboard-head {
   align-items: center;
 }
@@ -3390,7 +3425,9 @@ textarea {
 .schedule-cards .card {
   box-shadow: none;
 }
-footer { margin-top: 24px; }
+footer {
+  margin-top: 24px;
+}
 body.dark .hero {
   background-color: #09071f;
 }
@@ -3401,14 +3438,18 @@ body.dark .member-history-card {
   border-left-color: var(--green);
 }
 @media (min-width: 1100px) {
-  .hero-content { max-width: 900px; }
-  .two-col { gap: 26px; }
+  .hero-content {
+    max-width: 900px;
+  }
+  .two-col {
+    gap: 26px;
+  }
 }
 @media (max-width: 760px) {
   .hero {
     min-height: 470px;
     background:
-      linear-gradient(90deg, rgba(10,7,48,.98), rgba(23,16,91,.91)),
+      linear-gradient(90deg, rgba(10, 7, 48, 0.98), rgba(23, 16, 91, 0.91)),
       url("./assets/images/club-logo.jpg") no-repeat 96% 92% / 180px auto,
       #17105b;
   }
