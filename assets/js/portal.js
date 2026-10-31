@@ -1,5 +1,5 @@
 "use strict";
-const STORAGE_KEY = "cpscrdc_portal_v2";
+/* Default portal data and state initialization */
 const defaultState = {
   currentUser: null,
   auditLog: [],
@@ -103,30 +103,7 @@ function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 function loadState() {
-  try {
-    const raw = null;
-    if (!raw) return clone(defaultState);
-    const parsed = JSON.parse(raw);
-    const base = clone(defaultState);
-    return {
-      ...base,
-      ...parsed,
-      members: Array.isArray(parsed.members) ? parsed.members : base.members,
-      motions: Array.isArray(parsed.motions) ? parsed.motions : base.motions,
-      debates: Array.isArray(parsed.debates) ? parsed.debates : base.debates,
-      adjustments: Array.isArray(parsed.adjustments) ? parsed.adjustments : base.adjustments,
-      auditLog: Array.isArray(parsed.auditLog) ? parsed.auditLog : base.auditLog,
-      sessions: Array.isArray(parsed.sessions) ? parsed.sessions : base.sessions,
-      scripts: Array.isArray(parsed.scripts) ? parsed.scripts : base.scripts,
-      users:
-        parsed.users && typeof parsed.users === "object"
-          ? { ...base.users, ...parsed.users }
-          : base.users,
-      currentUser: null,
-    };
-  } catch (e) {
-    return clone(defaultState);
-  }
+  return clone(defaultState);
 }
 let appState = loadState();
 let adminDashboardProfile = null;
@@ -160,6 +137,7 @@ function normalizeState() {
     if (!s.role) s.role = "General / All Roles";
   });
 }
+/* Debate scoring and judging criteria */
 function roundScore(n) {
   return Math.round((Number(n) || 0) * 100) / 100;
 }
@@ -633,6 +611,7 @@ function audit(action, details) {
 appState.scripts.forEach((s) => {
   if (!s.role) s.role = "General / All Roles";
 });
+/* Supabase configuration, authentication, and synchronization */
 const SUPABASE_URL = "https://syxywkaccrpwaprxddha.supabase.co";
 const SUPABASE_KEY = "sb_publishable_D0aTK-zXMl-Dr1eVcNMbSQ_A6Zsl706";
 let sb = null,
@@ -927,8 +906,8 @@ async function forgotPassword() {
 }
 function recoverPassword() {
   setTimeout(async () => {
-    const pw = prompt("Enter your new password (at least 6 characters):");
-    if (!pw || pw.length < 6) {
+    const pw = prompt("Enter your new password (at least 12 characters):");
+    if (!pw || pw.length < 12) {
       notify("Password not changed.");
       return;
     }
@@ -998,6 +977,7 @@ function updateNavbarAuth() {
     } else banner.classList.add("hidden");
   }
 }
+/* Public page rendering */
 function calculateLeaderboardStats(season = "all") {
   return appState.members.map((m) => {
     const relevantDebates = appState.debates.filter(
@@ -1663,6 +1643,7 @@ function deleteAchievement(id) {
   notify("Achievement deleted.");
 }
 
+/* Editor tools and content management */
 function switchAdminTab(tab) {
   if (!isEditor()) {
     notify("Editor access is required.");
@@ -2791,6 +2772,7 @@ function toggleDarkMode() {
   } catch (e) {}
   document.querySelectorAll(".theme-toggle").forEach((b) => (b.textContent = on ? "☀" : "☾"));
 }
+/* Member and account administration */
 let people = [];
 async function refreshPeople() {
   if (!sb || !isEditor()) return;
@@ -3104,6 +3086,7 @@ function resetPortalData() {
   switchPage("admin");
   notify("Demo data restored.");
 }
+/* Full portal rendering and startup */
 function renderAllPortalViews() {
   renderHome();
   renderLeaderboard();
