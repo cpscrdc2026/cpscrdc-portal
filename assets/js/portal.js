@@ -962,8 +962,8 @@ async function handleSignup(event) {
   const name = document.getElementById("signup-name").value.trim();
   const email = document.getElementById("signup-email").value.trim().toLowerCase();
   const password = document.getElementById("signup-password").value;
-  if (!name || password.length < 12) {
-    notify("Enter your name and a password of at least 12 characters.");
+  if (!name || password.length < 6) {
+    notify("Enter your name and a password of at least 6 characters.");
     return;
   }
   const { data, error } = await sb.auth.signUp({
@@ -1001,8 +1001,8 @@ async function forgotPassword() {
 }
 function recoverPassword() {
   setTimeout(async () => {
-    const pw = prompt("Enter your new password (at least 12 characters):");
-    if (!pw || pw.length < 12) {
+    const pw = prompt("Enter your new password (at least 6 characters):");
+    if (!pw || pw.length < 6) {
       notify("Password not changed.");
       return;
     }
