@@ -1841,6 +1841,8 @@ function switchAdminTab(tab) {
   document
     .querySelectorAll(".tab-btn")
     .forEach((el) => el.classList.toggle("active", el.dataset.tab === tab));
+  const sectionSelect = document.getElementById("admin-section-select");
+  if (sectionSelect) sectionSelect.value = tab;
   if (tab === "homepage") renderAdminHomepageContent();
   if (tab === "debates") {
     renderAdmin();
