@@ -2127,15 +2127,17 @@ body.dark .member-score-details > summary {
 }
 
 /* Keep results filters together and preserve their room beside the page heading. */
-#page-results .result-toolbar {
-  display: grid;
-  grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(145px, 1fr));
-  gap: 8px;
-  width: min(100%, 540px);
-}
-#page-results .result-toolbar > * {
-  width: 100%;
-  min-width: 0;
+@media (min-width: 641px) {
+  #page-results .result-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(145px, 1fr));
+    gap: 8px;
+    width: min(100%, 540px);
+  }
+  #page-results .result-toolbar > * {
+    width: 100%;
+    min-width: 0;
+  }
 }
 
 /* Keep calendar details descriptive while letting readers expand the full notes. */
