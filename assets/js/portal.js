@@ -666,7 +666,7 @@ function scorecardTableHtml(parts, emptyMsg) {
     ? parts
         .map((p) => {
           const m = appState.members.find((x) => Number(x.id) === Number(p.memberId));
-          return `<tr><td>${esc(m ? m.name : "Removed member")}</td><td>${esc("p.role || "Not recorded")}</td><td class="criteria-cell">${criteriaSummary(p)}</td><td><b>${fmt2(p.score)}/${participantMax(p)}</b></td></tr>`;
+          return `<tr><td>${esc(m ? m.name : "Removed member")}</td><td>${esc(p.role || "Not recorded")}</td><td class="criteria-cell">${criteriaSummary(p)}</td><td><b>${fmt2(p.score)}/${participantMax(p)}</b></td></tr>`;
         })
         .join("")
     : `<tr><td colspan="4">${emptyMsg}</td></tr>`;
