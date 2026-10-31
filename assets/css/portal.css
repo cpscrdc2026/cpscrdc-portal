@@ -2096,33 +2096,44 @@ body.dark .member-score-details > summary {
 }
 
 /* Keep leaderboard filters compact on phones so rankings stay in view. */
-@media (max-width: 640px) {
+@media (max-width: 900px) {
   #page-leaderboard > .panel.toolbar {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 190px));
+    justify-content: start;
     align-items: start;
-    gap: 8px;
-    padding: 12px;
+    gap: 6px 8px;
+    padding: 10px;
   }
   #page-leaderboard > .panel.toolbar > div:first-child {
     grid-column: 1 / -1;
   }
+  #page-leaderboard > .panel.toolbar > div:first-child h2 {
+    font-size: 17px;
+    line-height: 1.25;
+  }
+  #page-leaderboard > .panel.toolbar > div:first-child p {
+    margin: 3px 0;
+    font-size: 10px;
+    line-height: 1.3;
+  }
   #page-leaderboard > .panel.toolbar .toolbar-control {
     display: grid;
     align-content: start;
-    gap: 4px;
-    width: auto;
+    justify-self: start;
+    gap: 3px;
+    width: min(100%, 190px);
     min-width: 0;
   }
   #page-leaderboard > .panel.toolbar .toolbar-control label {
-    font-size: 11px;
+    font-size: 10px;
   }
   #page-leaderboard > .panel.toolbar .toolbar-control .input,
   #page-leaderboard > .panel.toolbar .toolbar-control select {
     width: 100%;
     min-width: 0;
-    padding: 7px 8px;
-    font-size: 12px;
+    padding: 6px 7px;
+    font-size: 11px;
   }
 }
 
