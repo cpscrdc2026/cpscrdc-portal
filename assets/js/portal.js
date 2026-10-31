@@ -926,7 +926,6 @@ async function afterSignIn(isNew) {
     isNew ? "New account created" : "Signed in",
     `${appState.currentUser.email} (${appState.currentUser.role})`,
   );
-  saveState();
   closeLoginModal();
   updateNavbarAuth();
   switchPage("home");
@@ -3148,7 +3147,7 @@ function exportPortalData() {
   saveState();
   notify("Backup export started.");
 }
-function restorePortalData(event) {
+async function restorePortalData(event) {
   if (!isEditor()) return;
   const file = event.target.files?.[0];
   if (!file) return;
@@ -3178,14 +3177,16 @@ function restorePortalData(event) {
         throw new Error("Invalid audit log.");
       if (!confirm("Restore this backup? Current portal data will be replaced.")) return;
       // Validate everything before changing live state, then commit the snapshot as one unit.
-      const previous = appState;
+      const previous = clone(appState);
       const next = { ...appState };
       for (const k of arrayKeys) if (Array.isArray(data[k])) next[k] = data[k];
       next.auditLog = Array.isArray(data.auditLog) ? data.auditLog : [];
       appState = next;
       audit("Restored backup", file.name);
-      if (!saveState()) {
+      clearTimeout(saveTimer);
+      if (!(await pushState())) {
         appState = previous;
+        renderAllPortalViews();
         throw new Error(
           "The backup could not be saved to the server; previous data was restored in memory.",
         );
