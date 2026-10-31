@@ -1,6 +1,8 @@
 name: Format mobile admin changes
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - fix/mobile-admin-portal
 permissions:
   contents: write
 jobs:
