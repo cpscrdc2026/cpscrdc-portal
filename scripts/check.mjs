@@ -19,7 +19,7 @@ assert.match(
 );
 assert.match(
   html,
-  /<script\s+src=["']\.\/assets\/js\/portal\.js["'][^>]*><\/script>/i,
+  /<script\s+src=["']\.\/assets\/js\/portal\.js(?:\?[^"']*)?["'][^>]*><\/script>/i,
   "portal application script must be linked",
 );
 assert.ok(css.trim().length > 0, "portal stylesheet must not be empty");
