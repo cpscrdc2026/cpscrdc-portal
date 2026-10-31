@@ -111,6 +111,15 @@ const defaultState = {
     },
   ],
   achievements: [],
+  homepageContent: {
+    headline: "Cantonment Public School and College Rangpur Debating Club",
+    shortDescription:
+      "Fostering eloquence, critical thinking, and rigorous parliamentary debate. Explore motions, check member rankings, and access training resources.",
+    introHeading: "About CPSCRDC",
+    introText:
+      "Fostering eloquence, critical thinking, and rigorous parliamentary debate. Explore motions, check member rankings, and access training resources.",
+    closingLine: "",
+  },
   users: {},
 };
 function clone(obj) {
@@ -733,6 +742,7 @@ async function pushState() {
         adjustments: s.adjustments,
         sessions: s.sessions,
         achievements: s.achievements,
+        homepageContent: s.homepageContent,
       },
     },
     { key: "scripts", data: s.scripts },
@@ -1195,7 +1205,24 @@ function openCalendarSchedule(filter = "all") {
   document.getElementById("page-calendar")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+function renderHomepageIntroduction() {
+  const content = { ...defaultState.homepageContent, ...(appState.homepageContent || {}) };
+  const headline = document.querySelector("#page-home .hero-content h2");
+  const shortDescription = document.getElementById("home-hero-description");
+  const introHeading = document.getElementById("home-introduction-heading");
+  const introText = document.getElementById("home-introduction-text");
+  const closing = document.getElementById("home-introduction-closing");
+  if (headline) headline.textContent = content.headline;
+  if (shortDescription) shortDescription.textContent = content.shortDescription;
+  if (introHeading) introHeading.textContent = content.introHeading;
+  if (introText) introText.textContent = content.introText;
+  if (closing) {
+    closing.textContent = content.closingLine || "";
+    closing.classList.toggle("hidden", !content.closingLine);
+  }
+}
 function renderHome() {
+  renderHomepageIntroduction();
   document.getElementById("stat-debaters").textContent = appState.members.filter(
     (m) => m.active !== false,
   ).length;
@@ -1744,6 +1771,65 @@ function deleteAchievement(id) {
 }
 
 /* Editor tools and content management */
+function readHomepageContentForm() {
+  return {
+    headline: document.getElementById("homepage-headline").value.trim(),
+    shortDescription: document.getElementById("homepage-short-description").value.trim(),
+    introHeading: document.getElementById("homepage-intro-heading").value.trim(),
+    introText: document.getElementById("homepage-intro-text").value.trim(),
+    closingLine: document.getElementById("homepage-closing-line").value.trim(),
+  };
+}
+function renderAdminHomepageContent() {
+  if (!isEditor()) return;
+  const content = { ...defaultState.homepageContent, ...(appState.homepageContent || {}) };
+  const fields = {
+    "homepage-headline": content.headline,
+    "homepage-short-description": content.shortDescription,
+    "homepage-intro-heading": content.introHeading,
+    "homepage-intro-text": content.introText,
+    "homepage-closing-line": content.closingLine,
+  };
+  Object.entries(fields).forEach(([id, value]) => {
+    const el = document.getElementById(id);
+    if (el && document.activeElement !== el) el.value = value || "";
+  });
+  previewHomepageContent();
+}
+function previewHomepageContent() {
+  const content = readHomepageContentForm();
+  document.getElementById("homepage-content-preview-heading").textContent = content.headline;
+  document.getElementById("homepage-content-preview-short").textContent = content.shortDescription;
+  document.getElementById("homepage-content-preview-intro-heading").textContent =
+    content.introHeading;
+  document.getElementById("homepage-content-preview-intro").textContent = content.introText;
+  const closing = document.getElementById("homepage-content-preview-closing");
+  closing.textContent = content.closingLine;
+  closing.classList.toggle("hidden", !content.closingLine);
+}
+function saveHomepageContent(event) {
+  event.preventDefault();
+  if (!isEditor()) {
+    notify("Editor access is required.");
+    return;
+  }
+  const content = readHomepageContentForm();
+  if (
+    !content.headline ||
+    !content.shortDescription ||
+    !content.introHeading ||
+    !content.introText
+  ) {
+    notify("Complete the headline and introduction fields before saving.");
+    return;
+  }
+  appState.homepageContent = content;
+  audit("Updated homepage introduction", content.introHeading);
+  renderHomepageIntroduction();
+  previewHomepageContent();
+  saveState();
+  notify("Homepage introduction saved.");
+}
 function switchAdminTab(tab) {
   if (!isEditor()) {
     notify("Editor access is required.");
@@ -1756,6 +1842,7 @@ function switchAdminTab(tab) {
   document
     .querySelectorAll(".tab-btn")
     .forEach((el) => el.classList.toggle("active", el.dataset.tab === tab));
+  if (tab === "homepage") renderAdminHomepageContent();
   if (tab === "debates") {
     renderAdmin();
     renderAdminDebateScores();
@@ -1777,6 +1864,7 @@ function renderAdmin() {
     motionSelect.innerHTML = '<option value="">Create a motion first</option>';
   const container = document.getElementById("debater-score-inputs");
   if (!container.children.length && appState.members.length) addDebaterScoreRow();
+  renderAdminHomepageContent();
   renderAdminMotionList();
   renderAdminSessionList();
   renderAdminMemberList();
