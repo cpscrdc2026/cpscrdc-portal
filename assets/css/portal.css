@@ -3491,3 +3491,174 @@ body.dark .member-history-card {
     flex: 0 0 auto;
   }
 }
+
+/* Mobile admin workspace */
+.admin-section-picker,
+.admin-section-select {
+  display: none;
+}
+@media (max-width: 760px) {
+  #page-admin {
+    gap: 16px;
+  }
+  .admin-head {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    padding: 20px;
+  }
+  .admin-head > div:first-child {
+    min-width: 0;
+  }
+  .admin-head h2 {
+    font-size: clamp(24px, 6vw, 32px);
+    line-height: 1.12;
+    overflow-wrap: anywhere;
+  }
+  .admin-head p {
+    margin-bottom: 0;
+    font-size: 13px;
+  }
+  .admin-section-picker {
+    display: block;
+    margin: 2px 0 -8px;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .admin-section-select {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 42px 10px 13px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 5px;
+    background-color: #fff;
+    color: var(--navy);
+    font-weight: 750;
+  }
+  .admin-head .tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    max-width: 100%;
+    gap: 7px;
+    margin: 0 -2px -2px;
+    padding: 2px 2px 8px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+  .admin-head .tab-btn {
+    flex: 0 0 auto;
+    min-height: 42px;
+    padding: 9px 12px;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+  .admin-tab {
+    min-width: 0;
+    padding: 18px;
+    overflow-wrap: anywhere;
+  }
+  .admin-tab > h3 {
+    font-size: 20px;
+    line-height: 1.25;
+  }
+  .admin-tab .subtle {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .admin-tab .form-grid,
+  .admin-tab .form-grid.three {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 13px;
+  }
+  .admin-tab .form-grid .field,
+  .admin-tab .field {
+    min-width: 0;
+  }
+  .admin-tab input,
+  .admin-tab select,
+  .admin-tab textarea,
+  .admin-tab .input {
+    width: 100%;
+    max-width: 100%;
+    min-height: 46px;
+    font-size: 16px;
+  }
+  .admin-tab textarea {
+    min-height: 112px;
+  }
+  .admin-tab .form-actions,
+  .admin-tab .top-actions,
+  .admin-tab .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+  .admin-tab .form-actions > .btn,
+  .admin-tab .top-actions > .btn {
+    flex: 1 1 100%;
+    min-height: 46px;
+  }
+  .admin-tab .actions > .btn {
+    flex: 1 1 100%;
+    min-height: 44px;
+  }
+  .admin-tab .panel-head {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .admin-tab .panel-head > * {
+    min-width: 0;
+  }
+  .admin-tab .card {
+    min-width: 0;
+    padding: 16px;
+  }
+  .admin-tab .card-top {
+    align-items: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .admin-tab .table-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .admin-tab table {
+    min-width: 620px;
+  }
+  .admin-tab .score-component-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .admin-tab .score-component-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .admin-tab .score-component-grid > * {
+    min-width: 0;
+  }
+  .admin-tab .field label {
+    line-height: 1.4;
+  }
+}
+@media (max-width: 420px) {
+  .admin-head {
+    padding: 17px 15px;
+  }
+  .admin-tab {
+    padding: 15px 12px;
+  }
+  .admin-tab .score-component-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .admin-tab .btn {
+    white-space: normal;
+    line-height: 1.35;
+  }
+}
