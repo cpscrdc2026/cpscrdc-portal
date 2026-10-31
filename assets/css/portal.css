@@ -3663,7 +3663,6 @@ body.dark .member-history-card {
   }
 }
 
-
 /* iPhone admin correction: use one navigation control and stack score inputs. */
 @media (max-width: 760px) {
   #page-admin,
@@ -3754,7 +3753,6 @@ body.dark .member-history-card {
     font-size: 13px;
   }
 }
-
 
 /* Correct the generated judge criteria grid on narrow phones. */
 @media (max-width: 760px) {
