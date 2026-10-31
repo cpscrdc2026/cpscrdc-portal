@@ -14,7 +14,7 @@ assert.match(html, /<!doctype html>/i, "index.html must declare HTML5");
 assert.match(html, /<\/html>\s*$/i, "index.html must close the root element");
 assert.match(
   html,
-  /href=["']\.\/assets\/css\/portal\.css["']/i,
+  /href=["']\.\/assets\/css\/portal\.css(?:\?[^"']*)?["']/i,
   "portal stylesheet must be linked",
 );
 assert.match(
