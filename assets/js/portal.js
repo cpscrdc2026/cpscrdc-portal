@@ -59,7 +59,7 @@ const defaultState = {
       ],
     },
   ],
-  adjustments: [],
+  adjustments: [], // Legacy backup field; retained but no longer used in scoring.
   sessions: [
     {
       id: 1,
@@ -996,9 +996,7 @@ function calculateLeaderboardStats(season = "all") {
     );
     const totalScore = scores.reduce((sum, n) => sum + n, 0);
     const pctTotal = pcts.reduce((sum, n) => sum + n, 0);
-    const adjustments = appState.adjustments
-      .filter((a) => Number(a.memberId) === Number(m.id))
-      .reduce((sum, a) => sum + (Number(a.points) || 0), 0);
+
     return {
       id: m.id,
       name: m.name,
@@ -1007,7 +1005,7 @@ function calculateLeaderboardStats(season = "all") {
       debatesPlayed: scores.length,
       average: pcts.length ? Math.round((pctTotal / pcts.length) * 100) / 100 : null,
       scorePoints: Math.round(totalScore * 100) / 100,
-      totalPoints: Math.round((totalScore + adjustments) * 100) / 100,
+      totalPoints: Math.round(totalScore * 100) / 100,
     };
   });
 }
@@ -1675,17 +1673,11 @@ function renderAdmin() {
     .join("");
   if (!appState.motions.length)
     motionSelect.innerHTML = '<option value="">Create a motion first</option>';
-  const adjSelect = document.getElementById("adj-member-select");
-  adjSelect.innerHTML = debaterOptionsHtml(
-    adjSelect.value,
-    document.getElementById("adj-member-search")?.value || "",
-  );
   const container = document.getElementById("debater-score-inputs");
   if (!container.children.length && appState.members.length) addDebaterScoreRow();
   renderAdminMotionList();
   renderAdminSessionList();
   renderAdminMemberList();
-  renderAdjustmentsList();
   renderAdminScriptList();
   renderAdminUsers();
   renderAuditLog();
@@ -1910,38 +1902,6 @@ function handleCreateMotion(event) {
   renderAdmin();
   switchPage("motions");
   notify("Motion published.");
-}
-function handleCreateAdjustment(event) {
-  event.preventDefault();
-  if (!isEditor()) return;
-  const memberId = Number(document.getElementById("adj-member-select").value),
-    points = Number(document.getElementById("adj-points").value),
-    reason = document.getElementById("adj-reason").value.trim();
-  if (
-    !memberId ||
-    !appState.members.some((m) => Number(m.id) === memberId) ||
-    !Number.isFinite(points) ||
-    !reason
-  ) {
-    notify("Enter a valid member, point amount, and reason.");
-    return;
-  }
-  appState.adjustments.push({
-    id: Date.now(),
-    memberId,
-    points,
-    reason,
-    createdAt: new Date().toISOString(),
-  });
-  audit(
-    "Ranking adjustment",
-    `${appState.members.find((m) => Number(m.id) === memberId)?.name || "Member"}: ${points} points · ${reason}`,
-  );
-  saveState();
-  event.target.reset();
-  renderAdmin();
-  renderLeaderboard();
-  notify("Point adjustment saved.");
 }
 function revealCalendarItem(id) {
   // Clear view filters after a write so the newly saved item cannot be hidden by a stale search/filter.
@@ -2169,34 +2129,6 @@ function toggleMember(id) {
   renderLeaderboard();
   notify(m.name + " is now " + (m.active ? "active" : "inactive") + ".");
 }
-function renderAdjustmentsList() {
-  const el = document.getElementById("adjustments-list");
-  if (!el) return;
-  el.innerHTML = appState.adjustments.length
-    ? '<div class="stack">' +
-      [...appState.adjustments]
-        .reverse()
-        .map((a) => {
-          const m = appState.members.find((x) => Number(x.id) === Number(a.memberId));
-          return `<div class="card" style="padding:13px"><div class="card-top"><b>${esc(m ? m.name : "Unknown member")}</b><span class="${Number(a.points) >= 0 ? "green" : "pill red"}">${Number(a.points) > 0 ? "+" : ""}${Number(a.points)} pts</span></div><p class="card-meta">${esc(a.reason)}</p><div style="text-align:right"><button class="btn danger small" onclick="deleteAdjustment(${Number(a.id)})">Remove</button></div></div>`;
-        })
-        .join("") +
-      "</div>"
-    : '<div class="empty">No manual adjustments have been recorded.</div>';
-}
-function deleteAdjustment(id) {
-  if (!isEditor()) return;
-  if (!confirm("Remove this adjustment?")) return;
-  const old = appState.adjustments.find((a) => Number(a.id) === Number(id));
-  audit("Removed ranking adjustment", old?.reason || "Adjustment");
-  appState.adjustments = appState.adjustments.filter((a) => Number(a.id) !== Number(id));
-  saveState();
-  renderAdmin();
-  renderLeaderboard();
-  renderHome();
-  notify("Adjustment removed.");
-}
-
 function openMotionEditor(id = null) {
   if (!isEditor()) {
     notify("Editor access is required.");
