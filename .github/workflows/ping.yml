@@ -1,12 +1,17 @@
 name: keep-alive
+
 on:
   schedule:
-    - cron: "0 6 */3 * *"   # Runs every 3 days at 06:00 UTC
-  workflow_dispatch:          # Allows manual triggering from GitHub UI
+    - cron: "0 6 */3 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   ping:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -14,4 +19,3 @@ jobs:
           node-version: 22
       - name: Check Supabase Auth health
         run: node scripts/ping-supabase.mjs
-
