@@ -3152,7 +3152,7 @@ async function restorePortalData(event) {
   const file = event.target.files?.[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = () => {
+  reader.onload = async () => {
     try {
       const data = JSON.parse(String(reader.result));
       if (!data || typeof data !== "object" || Array.isArray(data))
