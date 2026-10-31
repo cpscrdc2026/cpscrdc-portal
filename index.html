@@ -104,7 +104,7 @@
           <div class="hero-content">
             <span class="eyebrow">Official Club Portal</span>
             <h2>Cantonment Public School and College Rangpur Debating Club</h2>
-            <p>
+            <p id="home-hero-description">
               Fostering eloquence, critical thinking, and rigorous parliamentary debate. Explore
               motions, check member rankings, and access training resources.
             </p>
@@ -114,6 +114,14 @@
             </div>
           </div>
         </div>
+        <section class="panel home-introduction" aria-labelledby="home-introduction-heading">
+          <div class="home-introduction-copy">
+            <span class="eyebrow">About the Club</span>
+            <h2 id="home-introduction-heading">About CPSCRDC</h2>
+            <p id="home-introduction-text">Fostering eloquence, critical thinking, and rigorous parliamentary debate. Explore motions, check member rankings, and access training resources.</p>
+            <p id="home-introduction-closing" class="subtle hidden"></p>
+          </div>
+        </section>
         <div class="stats">
           <div class="stat">
             <div class="stat-icon">♟</div>
@@ -498,6 +506,9 @@
             <p>Manage motions, schedule sessions, and enter debate scores.</p>
           </div>
           <div class="tabs">
+            <button class="tab-btn" data-tab="homepage" onclick="switchAdminTab('homepage')">
+              Homepage Content
+            </button>
             <button class="tab-btn active" data-tab="debates" onclick="switchAdminTab('debates')">
               Record Debate &amp; Scores
             </button>
@@ -527,6 +538,44 @@
               Backup & Restore
             </button>
           </div>
+        </div>
+        <div id="admin-sub-homepage" class="admin-tab panel">
+          <h3>Homepage Introduction & Club Description</h3>
+          <p class="subtle">Update the public homepage wording here. This does not change the club logo, statistics, calendar, achievements, or any debate records.</p>
+          <form id="homepage-content-form" onsubmit="saveHomepageContent(event)" class="stack">
+            <div class="field">
+              <label for="homepage-headline">Homepage headline</label>
+              <input class="input" id="homepage-headline" maxlength="180" required />
+            </div>
+            <div class="field">
+              <label for="homepage-short-description">Short homepage introduction</label>
+              <textarea class="input" id="homepage-short-description" rows="3" maxlength="700" required></textarea>
+            </div>
+            <div class="field">
+              <label for="homepage-intro-heading">Club introduction heading</label>
+              <input class="input" id="homepage-intro-heading" maxlength="100" required />
+            </div>
+            <div class="field">
+              <label for="homepage-intro-text">Club introduction / About description</label>
+              <textarea class="input" id="homepage-intro-text" rows="6" maxlength="2400" required></textarea>
+            </div>
+            <div class="field">
+              <label for="homepage-closing-line">Optional closing line</label>
+              <input class="input" id="homepage-closing-line" maxlength="240" placeholder="Leave blank to hide this line" />
+            </div>
+            <div class="panel" aria-live="polite">
+              <h4>Preview</h4>
+              <h3 id="homepage-content-preview-heading">Cantonment Public School and College Rangpur Debating Club</h3>
+              <p id="homepage-content-preview-short"></p>
+              <h4 id="homepage-content-preview-intro-heading">About CPSCRDC</h4>
+              <p id="homepage-content-preview-intro"></p>
+              <p id="homepage-content-preview-closing" class="subtle"></p>
+            </div>
+            <div class="form-actions">
+              <button class="btn secondary" type="button" onclick="previewHomepageContent()">Preview Changes</button>
+              <button class="btn" type="submit">Save Homepage Content</button>
+            </div>
+          </form>
         </div>
         <div id="admin-sub-debates" class="admin-tab active panel">
           <h3>Record Debate Result & Scores</h3>
