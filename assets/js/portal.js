@@ -113,9 +113,11 @@ const defaultState = {
   achievements: [],
   homepageContent: {
     headline: "Cantonment Public School and College Rangpur Debating Club",
-    shortDescription: "Fostering eloquence, critical thinking, and rigorous parliamentary debate. Explore motions, check member rankings, and access training resources.",
+    shortDescription:
+      "Fostering eloquence, critical thinking, and rigorous parliamentary debate. Explore motions, check member rankings, and access training resources.",
     introHeading: "About CPSCRDC",
-    introText: "Fostering eloquence, critical thinking, and rigorous parliamentary debate. Explore motions, check member rankings, and access training resources.",
+    introText:
+      "Fostering eloquence, critical thinking, and rigorous parliamentary debate. Explore motions, check member rankings, and access training resources.",
     closingLine: "",
   },
   users: {},
@@ -1798,7 +1800,8 @@ function previewHomepageContent() {
   const content = readHomepageContentForm();
   document.getElementById("homepage-content-preview-heading").textContent = content.headline;
   document.getElementById("homepage-content-preview-short").textContent = content.shortDescription;
-  document.getElementById("homepage-content-preview-intro-heading").textContent = content.introHeading;
+  document.getElementById("homepage-content-preview-intro-heading").textContent =
+    content.introHeading;
   document.getElementById("homepage-content-preview-intro").textContent = content.introText;
   const closing = document.getElementById("homepage-content-preview-closing");
   closing.textContent = content.closingLine;
@@ -1811,7 +1814,12 @@ function saveHomepageContent(event) {
     return;
   }
   const content = readHomepageContentForm();
-  if (!content.headline || !content.shortDescription || !content.introHeading || !content.introText) {
+  if (
+    !content.headline ||
+    !content.shortDescription ||
+    !content.introHeading ||
+    !content.introText
+  ) {
     notify("Complete the headline and introduction fields before saving.");
     return;
   }
