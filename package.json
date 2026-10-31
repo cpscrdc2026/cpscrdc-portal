@@ -1,0 +1,8 @@
+{
+  "name": "cpscrdc-portal",
+  "private": true,
+  "scripts": {
+    "check": "node scripts/check.mjs"
+  }
+}
+
