@@ -3662,3 +3662,124 @@ body.dark .member-history-card {
     line-height: 1.35;
   }
 }
+
+/* iPhone admin correction: use one navigation control and stack score inputs. */
+@media (max-width: 760px) {
+  #page-admin,
+  #page-admin > *,
+  #page-admin .admin-tab,
+  #page-admin .admin-tab > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+  #page-admin .admin-head {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  #page-admin .admin-head .tabs {
+    display: none !important;
+  }
+  #page-admin .admin-section-select {
+    display: block !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  #page-admin .admin-tab {
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  #page-admin .admin-tab .score-component-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  #page-admin .admin-tab .score-component-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+  }
+  #page-admin .admin-tab .score-component-grid > * {
+    min-width: 0;
+  }
+  #page-admin .admin-tab .score-component-grid input,
+  #page-admin .admin-tab .score-component-grid select {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  #page-admin .admin-tab .judge-card {
+    padding: 12px;
+    min-width: 0;
+    overflow: hidden;
+  }
+  #page-admin .admin-tab .judge-head {
+    flex-wrap: wrap;
+    font-size: 13px;
+  }
+  #page-admin .admin-tab .field label,
+  #page-admin .admin-tab .score-component-grid label {
+    font-size: 12px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+  #page-admin .admin-tab .score-component-grid input {
+    min-height: 46px;
+    font-size: 16px;
+  }
+  #page-admin .admin-tab .score-total {
+    font-size: 14px;
+  }
+  #page-admin .admin-tab .form-grid,
+  #page-admin .admin-tab .form-grid.three {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #page-admin .admin-tab .form-actions > *,
+  #page-admin .admin-tab .top-actions > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+@media (max-width: 420px) {
+  #page-admin .admin-tab .score-component-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #page-admin .admin-tab .score-component-grid label {
+    font-size: 13px;
+  }
+}
+
+/* Correct the generated judge criteria grid on narrow phones. */
+@media (max-width: 760px) {
+  #page-admin .criteria-box,
+  #page-admin .judge-cards,
+  #page-admin .judge-card,
+  #page-admin .criteria-grid {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  #page-admin .criteria-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px;
+  }
+  #page-admin .criteria-grid > *,
+  #page-admin .criteria-grid label,
+  #page-admin .criteria-grid input,
+  #page-admin .criteria-grid select {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  #page-admin .score-row,
+  #page-admin .score-row-stack {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
