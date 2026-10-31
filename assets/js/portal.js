@@ -80,8 +80,7 @@ const defaultState = {
       title: "AP Parliamentary Workshop",
       date: "2026-05-20",
       location: "Auditorium Room 204",
-      notes:
-        "Focus on rebuttal structures and point of information (POI) mastery.",
+      notes: "Focus on rebuttal structures and point of information (POI) mastery.",
     },
     {
       id: 2,
@@ -127,28 +126,22 @@ function normalizeState() {
   if (!Array.isArray(appState.achievements)) appState.achievements = [];
   appState.debates.forEach((d) => {
     if (!d.format) d.format = "Asian Parliamentary";
-    if (!d.season)
-      d.season = String((d.date || new Date().toISOString()).slice(0, 4));
+    if (!d.season) d.season = String((d.date || new Date().toISOString()).slice(0, 4));
     (d.participants || []).forEach((p) => {
       const mapped = scoringRole(p.role);
       if (mapped && mapped !== p.role) p.role = mapped;
       if (p.criteria && mapped) {
         if (Array.isArray(p.judges) && p.judges.length) {
           p.score = round2(
-            p.judges.reduce((a, j) => a + (Number(j.score) || 0), 0) /
-              p.judges.length,
+            p.judges.reduce((a, j) => a + (Number(j.score) || 0), 0) / p.judges.length,
           );
         } else {
-          p.score = round2(
-            Object.values(p.criteria).reduce((a, v) => a + (Number(v) || 0), 0),
-          );
+          p.score = round2(Object.values(p.criteria).reduce((a, v) => a + (Number(v) || 0), 0));
         }
       } else {
         if (!Number.isFinite(Number(p.score))) {
           p.score = roundScore(
-            (Number(p.matter) || 0) +
-              (Number(p.manner) || 0) +
-              (Number(p.method) || 0),
+            (Number(p.matter) || 0) + (Number(p.manner) || 0) + (Number(p.method) || 0),
           );
         }
       }
@@ -549,9 +542,7 @@ function updateCriteriaTotal(input) {
   let sum = 0;
   cards.forEach((card) => {
     let t = 0;
-    card
-      .querySelectorAll(".crit-input")
-      .forEach((i) => (t += Number(i.value) || 0));
+    card.querySelectorAll(".crit-input").forEach((i) => (t += Number(i.value) || 0));
     sum += t;
     const out = card.querySelector(".crit-total");
     if (out) out.textContent = fmt2(t);
@@ -581,8 +572,7 @@ function swapCriteria(selectEl, boxHostSelector) {
       const keep = {};
       if (cfg)
         cfg.criteria.forEach((c) => {
-          if (vals[c.key] !== undefined && Number(vals[c.key]) <= c.max)
-            keep[c.key] = vals[c.key];
+          if (vals[c.key] !== undefined && Number(vals[c.key]) <= c.max) keep[c.key] = vals[c.key];
         });
       keepArr[i] = keep;
     });
@@ -619,11 +609,7 @@ function rebuildJudgeBoxes(listSelector, inputId) {
   inp.value = n;
   boxes.forEach((old) => {
     const tmp = document.createElement("div");
-    tmp.innerHTML = criteriaBoxHtml(
-      old.dataset.role,
-      collectJudgeValues(old),
-      n,
-    );
+    tmp.innerHTML = criteriaBoxHtml(old.dataset.role, collectJudgeValues(old), n);
     old.replaceWith(tmp.firstElementChild);
   });
 }
@@ -670,9 +656,7 @@ function scorecardTableHtml(parts, emptyMsg) {
   const rowsHtml = parts.length
     ? parts
         .map((p) => {
-          const m = appState.members.find(
-            (x) => Number(x.id) === Number(p.memberId),
-          );
+          const m = appState.members.find((x) => Number(x.id) === Number(p.memberId));
           return `<tr><td>${esc(m ? m.name : "Removed member")}</td><td>${esc(p.role || "—")}</td><td class="criteria-cell">${criteriaSummary(p)}</td><td><b>${fmt2(p.score)}/${participantMax(p)}</b></td></tr>`;
         })
         .join("")
@@ -688,14 +672,9 @@ function scorecardTableHtml(parts, emptyMsg) {
   const teams = hasAny
     ? `<tr><td colspan="3"><b>Government team total</b></td><td><b>${fmt2(side("Government"))}/350</b></td></tr><tr><td colspan="3"><b>Opposition team total</b></td><td><b>${fmt2(side("Opposition"))}/350</b></td></tr>`
     : "";
-  const jn = Math.max(
-    1,
-    ...parts.map((p) => (Array.isArray(p.judges) ? p.judges.length : 1)),
-  );
+  const jn = Math.max(1, ...parts.map((p) => (Array.isArray(p.judges) ? p.judges.length : 1)));
   const jnote =
-    jn > 1
-      ? `<p class="judge-note">Scores shown are the average of ${jn} judges.</p>`
-      : "";
+    jn > 1 ? `<p class="judge-note">Scores shown are the average of ${jn} judges.</p>` : "";
   return `${jnote}<div class="table-wrap"><table><thead><tr><th>Debater</th><th>Role</th><th>Criteria scores</th><th>Total</th></tr></thead><tbody>${rowsHtml}${teams}</tbody></table></div>`;
 }
 
@@ -705,9 +684,7 @@ function audit(action, details) {
     id: Date.now() + Math.random(),
     action,
     details: String(details || ""),
-    user: appState.currentUser
-      ? appState.currentUser.displayName
-      : "System / Public",
+    user: appState.currentUser ? appState.currentUser.displayName : "System / Public",
     at: new Date().toISOString(),
   });
   appState.auditLog = appState.auditLog.slice(0, 300);
@@ -722,20 +699,10 @@ let sb = null,
   sbError = "";
 try {
   if (typeof supabase === "undefined")
-    throw new Error(
-      "Supabase library could not load (check internet connection).",
-    );
-  if (
-    !/^https:\/\/.+\.supabase\.co/.test(SUPABASE_URL) ||
-    SUPABASE_KEY.startsWith("YOUR_")
-  )
-    throw new Error(
-      "Setup incomplete: put your Supabase URL and key in index.html.",
-    );
-  sb = supabase.createClient(
-    new URL(SUPABASE_URL.trim()).origin,
-    SUPABASE_KEY.trim(),
-  );
+    throw new Error("Supabase library could not load (check internet connection).");
+  if (!/^https:\/\/.+\.supabase\.co/.test(SUPABASE_URL) || SUPABASE_KEY.startsWith("YOUR_"))
+    throw new Error("Setup incomplete: put your Supabase URL and key in index.html.");
+  sb = supabase.createClient(new URL(SUPABASE_URL.trim()).origin, SUPABASE_KEY.trim());
   sb.auth.onAuthStateChange((ev) => {
     if (ev === "PASSWORD_RECOVERY") recoverPassword();
   });
@@ -752,9 +719,7 @@ function saveState() {
 }
 async function pushState() {
   if (!isEditor() || !remoteLoaded || !sb) {
-    notify(
-      "Save unavailable: editor session or server connection is not ready.",
-    );
+    notify("Save unavailable: editor session or server connection is not ready.");
     return false;
   }
   const s = appState;
@@ -788,8 +753,7 @@ async function loadRemote() {
   }
   remoteLoaded = true;
   for (const r of data || []) {
-    if (r.key === "public" && r.data && typeof r.data === "object")
-      Object.assign(appState, r.data);
+    if (r.key === "public" && r.data && typeof r.data === "object") Object.assign(appState, r.data);
     if (r.key === "scripts" && Array.isArray(r.data)) appState.scripts = r.data;
     if (r.key === "audit" && Array.isArray(r.data)) appState.auditLog = r.data;
   }
@@ -815,11 +779,7 @@ async function loadSession() {
     appState.currentUser = null;
     return;
   }
-  const { data: p } = await sb
-    .from("profiles")
-    .select("*")
-    .eq("id", session.user.id)
-    .single();
+  const { data: p } = await sb.from("profiles").select("*").eq("id", session.user.id).single();
   appState.currentUser = p
     ? {
         id: p.id,
@@ -834,10 +794,7 @@ async function loadSession() {
 function esc(value) {
   return String(value ?? "").replace(
     /[&<>"']/g,
-    (ch) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
-        ch
-      ],
+    (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch],
   );
 }
 function fmtDate(date) {
@@ -867,8 +824,7 @@ function isEditor() {
 function hasMemberAccess() {
   return (
     !!appState.currentUser &&
-    (appState.currentUser.role === "member" ||
-      appState.currentUser.role === "editor")
+    (appState.currentUser.role === "member" || appState.currentUser.role === "editor")
   );
 }
 function showPage(pageId, updateUrl = true) {
@@ -889,9 +845,7 @@ function showPage(pageId, updateUrl = true) {
     if (appState.currentUser) {
       notify("Your membership request is awaiting admin approval.");
     } else {
-      notify(
-        "This section is for members. Public pages remain open to everyone.",
-      );
+      notify("This section is for members. Public pages remain open to everyone.");
     }
     pageId = "home";
   }
@@ -933,24 +887,13 @@ function renderCurrentPage(page) {
   };
   if (map[page]) map[page]();
 }
-window.addEventListener("hashchange", () =>
-  showPage(location.hash.slice(1) || "home", false),
-);
-window.addEventListener("popstate", () =>
-  showPage(location.hash.slice(1) || "home", false),
-);
+window.addEventListener("hashchange", () => showPage(location.hash.slice(1) || "home", false));
+window.addEventListener("popstate", () => showPage(location.hash.slice(1) || "home", false));
 function showAuthTab(tab) {
-  document
-    .getElementById("auth-login")
-    .classList.toggle("hidden", tab !== "login");
-  document
-    .getElementById("auth-signup")
-    .classList.toggle("hidden", tab !== "signup");
+  document.getElementById("auth-login").classList.toggle("hidden", tab !== "login");
+  document.getElementById("auth-signup").classList.toggle("hidden", tab !== "signup");
   setTimeout(
-    () =>
-      document
-        .getElementById(tab === "login" ? "login-email" : "signup-name")
-        .focus(),
+    () => document.getElementById(tab === "login" ? "login-email" : "signup-name").focus(),
     50,
   );
 }
@@ -986,10 +929,7 @@ async function handleLogin(event) {
     notify(sbError || "Not connected to the server.");
     return;
   }
-  const email = document
-    .getElementById("login-email")
-    .value.trim()
-    .toLowerCase();
+  const email = document.getElementById("login-email").value.trim().toLowerCase();
   const password = document.getElementById("login-password").value;
   const { error } = await sb.auth.signInWithPassword({ email, password });
   if (error) {
@@ -1001,8 +941,7 @@ async function handleLogin(event) {
     return;
   }
   document.getElementById("login-password").value = "";
-  if (await afterSignIn(false))
-    notify("Welcome back, " + appState.currentUser.displayName + "!");
+  if (await afterSignIn(false)) notify("Welcome back, " + appState.currentUser.displayName + "!");
 }
 async function handleSignup(event) {
   event.preventDefault();
@@ -1011,10 +950,7 @@ async function handleSignup(event) {
     return;
   }
   const name = document.getElementById("signup-name").value.trim();
-  const email = document
-    .getElementById("signup-email")
-    .value.trim()
-    .toLowerCase();
+  const email = document.getElementById("signup-email").value.trim().toLowerCase();
   const password = document.getElementById("signup-password").value;
   if (!name || password.length < 12) {
     notify("Enter your name and a password of at least 12 characters.");
@@ -1036,19 +972,14 @@ async function handleSignup(event) {
   }
   document.getElementById("signup-password").value = "";
   if (await afterSignIn(true))
-    notify(
-      "Request sent. A club admin will review it before you can access member features.",
-    );
+    notify("Request sent. A club admin will review it before you can access member features.");
 }
 async function forgotPassword() {
   if (!sb) {
     notify(sbError || "Not connected to the server.");
     return;
   }
-  const email = document
-    .getElementById("login-email")
-    .value.trim()
-    .toLowerCase();
+  const email = document.getElementById("login-email").value.trim().toLowerCase();
   if (!email) {
     notify("Type your email above first, then click Forgot password.");
     return;
@@ -1056,11 +987,7 @@ async function forgotPassword() {
   const { error } = await sb.auth.resetPasswordForEmail(email, {
     redirectTo: location.origin + location.pathname,
   });
-  notify(
-    error
-      ? error.message
-      : "If that email has an account, a reset link has been sent.",
-  );
+  notify(error ? error.message : "If that email has an account, a reset link has been sent.");
 }
 function recoverPassword() {
   setTimeout(async () => {
@@ -1122,8 +1049,7 @@ function updateNavbarAuth() {
       `<div class="user-chip"><strong>${esc(u.displayName)}</strong><span>${esc(label)}</span></div><button class="btn secondary" onclick="logout()" title="Log out">↪ Logout</button>`;
   } else
     area.innerHTML =
-      tog +
-      '<button class="btn" onclick="openLoginModal()">↪ Sign In / Join</button>';
+      tog + '<button class="btn" onclick="openLoginModal()">↪ Sign In / Join</button>';
   if (banner) {
     if (u && u.role === "pending") {
       banner.innerHTML =
@@ -1141,17 +1067,13 @@ function calculateLeaderboardStats(season = "all") {
   return appState.members.map((m) => {
     const relevantDebates = appState.debates.filter(
       (d) =>
-        season === "all" ||
-        String(d.season || String(d.date || "").slice(0, 4)) === String(season),
+        season === "all" || String(d.season || String(d.date || "").slice(0, 4)) === String(season),
     );
     const scores = [],
       pcts = [];
     relevantDebates.forEach((d) =>
       (Array.isArray(d.participants) ? d.participants : []).forEach((p) => {
-        if (
-          Number(p.memberId) === Number(m.id) &&
-          Number.isFinite(Number(p.score))
-        ) {
+        if (Number(p.memberId) === Number(m.id) && Number.isFinite(Number(p.score))) {
           scores.push(Number(p.score));
           pcts.push(participantPercent(p));
         }
@@ -1168,9 +1090,7 @@ function calculateLeaderboardStats(season = "all") {
       active: m.active !== false,
       excludedFromLeaderboard: m.excludedFromLeaderboard === true,
       debatesPlayed: scores.length,
-      average: pcts.length
-        ? Math.round((pctTotal / pcts.length) * 100) / 100
-        : null,
+      average: pcts.length ? Math.round((pctTotal / pcts.length) * 100) / 100 : null,
       scorePoints: Math.round(totalScore * 100) / 100,
       totalPoints: Math.round((totalScore + adjustments) * 100) / 100,
     };
@@ -1211,12 +1131,10 @@ function sessionType(session) {
     .trim()
     .toLowerCase();
   if (raw === "debate" || raw === "debates") return "Debate";
-  if (raw === "event" || raw === "club event" || raw === "events")
-    return "Event";
+  if (raw === "event" || raw === "club event" || raw === "events") return "Event";
   if (raw === "tournament" || raw === "competition") return "Tournament";
   if (raw === "workshop") return "Workshop";
-  if (raw === "training session" || raw === "training")
-    return "Training Session";
+  if (raw === "training session" || raw === "training") return "Training Session";
   const title = String(session?.title || "");
   if (/\bdebate\b|sparring/i.test(title)) return "Debate";
   if (/tournament|championship|competition/i.test(title)) return "Tournament";
@@ -1253,12 +1171,8 @@ function renderHomeSchedule() {
         String(a.date).localeCompare(String(b.date)) ||
         String(a.title).localeCompare(String(b.title)),
     );
-  const debates = upcoming
-    .filter((s) => sessionType(s) === "Debate")
-    .slice(0, 5);
-  const events = upcoming
-    .filter((s) => sessionType(s) !== "Debate")
-    .slice(0, 5);
+  const debates = upcoming.filter((s) => sessionType(s) === "Debate").slice(0, 5);
+  const events = upcoming.filter((s) => sessionType(s) !== "Debate").slice(0, 5);
   debateEl.innerHTML = debates.length
     ? debates.map((s) => scheduleItemHTML(s)).join("")
     : `<div class="empty">No upcoming debates are scheduled. Add a debate in Calendar to show it here automatically.</div>`;
@@ -1278,34 +1192,25 @@ function openCalendarSchedule(filter = "all") {
     select.value = filter;
     renderCalendar();
   }
-  document
-    .getElementById("page-calendar")
-    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  document.getElementById("page-calendar")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function renderHome() {
-  document.getElementById("stat-debaters").textContent =
-    appState.members.filter((m) => m.active !== false).length;
+  document.getElementById("stat-debaters").textContent = appState.members.filter(
+    (m) => m.active !== false,
+  ).length;
   document.getElementById("stat-debates").textContent = appState.debates.length;
   document.getElementById("stat-motions").textContent = appState.motions.length;
   document.getElementById("stat-scripts").textContent = appState.scripts.length;
-  const homeSeason =
-    document.getElementById("leaderboard-season-select")?.value || "all";
+  const homeSeason = document.getElementById("leaderboard-season-select")?.value || "all";
   const homeTitle = document.getElementById("home-leaderboard-title");
   if (homeTitle)
     homeTitle.textContent =
-      "🏆 Top Debaters (" +
-      (homeSeason === "all" ? "All Seasons" : homeSeason) +
-      ")";
+      "🏆 Top Debaters (" + (homeSeason === "all" ? "All Seasons" : homeSeason) + ")";
   const homeLimit = hasMemberAccess() ? 5 : 7;
   const rows = calculateLeaderboardStats(homeSeason)
-    .filter(
-      (x) => x.active && !x.excludedFromLeaderboard && x.debatesPlayed >= 3,
-    )
-    .sort(
-      (a, b) =>
-        (b.average ?? -1) - (a.average ?? -1) || b.totalPoints - a.totalPoints,
-    )
+    .filter((x) => x.active && !x.excludedFromLeaderboard && x.debatesPlayed >= 3)
+    .sort((a, b) => (b.average ?? -1) - (a.average ?? -1) || b.totalPoints - a.totalPoints)
     .slice(0, homeLimit);
   document.getElementById("home-leaderboard-body").innerHTML = rows.length
     ? rows
@@ -1352,9 +1257,7 @@ function renderLeaderboard() {
   const sortEl = document.getElementById("leaderboard-sort-select"),
     sort = sortEl ? sortEl.value : "average";
   const query = editor
-    ? (document.getElementById("leaderboard-search")?.value || "")
-        .trim()
-        .toLowerCase()
+    ? (document.getElementById("leaderboard-search")?.value || "").trim().toLowerCase()
     : "";
   const seasonEl = document.getElementById("leaderboard-season-select"),
     season = seasonEl ? seasonEl.value : "all";
@@ -1368,9 +1271,7 @@ function renderLeaderboard() {
     .forEach((el) => el.classList.toggle("hidden", !editor));
   const visibilityNote = document.getElementById("leaderboard-visibility-note");
   if (visibilityNote) visibilityNote.classList.toggle("hidden", editor);
-  const provisionalPanel = document.getElementById(
-    "leaderboard-provisional-panel",
-  );
+  const provisionalPanel = document.getElementById("leaderboard-provisional-panel");
   if (provisionalPanel) provisionalPanel.classList.toggle("hidden", !editor);
   const seasons = [
     ...new Set(
@@ -1385,9 +1286,7 @@ function renderLeaderboard() {
     const prior = seasonEl.value || "all";
     seasonEl.innerHTML =
       '<option value="all">All seasons</option>' +
-      seasons
-        .map((y) => `<option value="${esc(y)}">${esc(y)}</option>`)
-        .join("");
+      seasons.map((y) => `<option value="${esc(y)}">${esc(y)}</option>`).join("");
     seasonEl.value = seasons.includes(prior) || prior === "all" ? prior : "all";
   }
   const stats = calculateLeaderboardStats(season).filter((x) =>
@@ -1406,58 +1305,46 @@ function renderLeaderboard() {
       : sort === "average"
         ? (b.average ?? -1) - (a.average ?? -1) || b.totalPoints - a.totalPoints
         : sort === "debates"
-          ? b.debatesPlayed - a.debatesPlayed ||
-            (b.average ?? -1) - (a.average ?? -1)
-          : b.totalPoints - a.totalPoints ||
-            (b.average ?? -1) - (a.average ?? -1);
+          ? b.debatesPlayed - a.debatesPlayed || (b.average ?? -1) - (a.average ?? -1)
+          : b.totalPoints - a.totalPoints || (b.average ?? -1) - (a.average ?? -1);
   const list = filtered.sort(cmp),
-    official = list.filter(
-      (x) => x.active && !x.excludedFromLeaderboard && x.debatesPlayed >= 3,
-    ),
-    provisional = list.filter(
-      (x) => x.excludedFromLeaderboard || !x.active || x.debatesPlayed < 3,
-    );
+    official = list.filter((x) => x.active && !x.excludedFromLeaderboard && x.debatesPlayed >= 3),
+    provisional = list.filter((x) => x.excludedFromLeaderboard || !x.active || x.debatesPlayed < 3);
   const memberView = hasMemberAccess();
   const publicLimit = memberView ? 5 : 7;
   const visibleOfficial = editor ? official : official.slice(0, publicLimit);
-  document.getElementById("leaderboard-ranked-body").innerHTML =
-    visibleOfficial.length
-      ? visibleOfficial
-          .map(
-            (x, i) =>
-              `<tr><td class="rank">${i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "#" + (i + 1)}</td><td>${esc(x.name)}</td><td>${x.debatesPlayed}</td><td class="green">${fmt2(x.average)}%</td><td>${fmt2(x.totalPoints)} pts</td>${leaderboardManagementButtons(x)}</tr>`,
-          )
-          .join("")
-      : emptyRow(
-          editor ? 6 : memberView ? 5 : 7,
-          "No official rankings match. Active, included debaters need at least 3 debates in the selected season.",
-        );
-  document.getElementById("leaderboard-provisional-body").innerHTML =
-    provisional.length
-      ? provisional
-          .map((x) => {
-            const label = x.excludedFromLeaderboard
-              ? "Excluded from leaderboard"
-              : !x.active
-                ? "Inactive"
-                : "Provisional";
-            return `<tr><td><span class="pill ${x.excludedFromLeaderboard || !x.active ? "red" : "gold"}">${label}</span></td><td>${esc(x.name)}</td><td>${x.debatesPlayed}</td><td>${x.average === null ? "—" : fmt2(x.average) + "%"}</td><td>${fmt2(x.totalPoints)} pts</td>${leaderboardManagementButtons(x)}</tr>`;
-          })
-          .join("")
-      : emptyRow(
-          isEditor() ? 6 : 5,
-          "No provisional, inactive, or excluded debaters match your search.",
-        );
+  document.getElementById("leaderboard-ranked-body").innerHTML = visibleOfficial.length
+    ? visibleOfficial
+        .map(
+          (x, i) =>
+            `<tr><td class="rank">${i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "#" + (i + 1)}</td><td>${esc(x.name)}</td><td>${x.debatesPlayed}</td><td class="green">${fmt2(x.average)}%</td><td>${fmt2(x.totalPoints)} pts</td>${leaderboardManagementButtons(x)}</tr>`,
+        )
+        .join("")
+    : emptyRow(
+        editor ? 6 : memberView ? 5 : 7,
+        "No official rankings match. Active, included debaters need at least 3 debates in the selected season.",
+      );
+  document.getElementById("leaderboard-provisional-body").innerHTML = provisional.length
+    ? provisional
+        .map((x) => {
+          const label = x.excludedFromLeaderboard
+            ? "Excluded from leaderboard"
+            : !x.active
+              ? "Inactive"
+              : "Provisional";
+          return `<tr><td><span class="pill ${x.excludedFromLeaderboard || !x.active ? "red" : "gold"}">${label}</span></td><td>${esc(x.name)}</td><td>${x.debatesPlayed}</td><td>${x.average === null ? "—" : fmt2(x.average) + "%"}</td><td>${fmt2(x.totalPoints)} pts</td>${leaderboardManagementButtons(x)}</tr>`;
+        })
+        .join("")
+    : emptyRow(
+        isEditor() ? 6 : 5,
+        "No provisional, inactive, or excluded debaters match your search.",
+      );
 }
 function renderMotions() {
-  const q = (document.getElementById("motion-search")?.value || "")
-      .trim()
-      .toLowerCase(),
+  const q = (document.getElementById("motion-search")?.value || "").trim().toLowerCase(),
     catEl = document.getElementById("motion-category-filter"),
     statusEl = document.getElementById("motion-format-filter");
-  const cats = [
-    ...new Set(appState.motions.map((m) => m.category).filter(Boolean)),
-  ].sort();
+  const cats = [...new Set(appState.motions.map((m) => m.category).filter(Boolean))].sort();
   if (catEl) {
     const old = catEl.value || "all";
     catEl.innerHTML =
@@ -1492,9 +1379,7 @@ function renderMotions() {
 function viewMotionDetail(id) {
   const m = appState.motions.find((x) => Number(x.id) === Number(id));
   if (!m) return;
-  const results = appState.debates.filter(
-    (d) => Number(d.motionId) === Number(m.id),
-  );
+  const results = appState.debates.filter((d) => Number(d.motionId) === Number(m.id));
   openDetailModal(
     m.text,
     `<p><span class="pill blue">${esc(m.category)}</span> <span class="pill">${esc(m.status)}</span></p><h3>Info slide</h3><p>${esc(m.info || "No additional information supplied.")}</p><p><b>Format:</b> ${esc(m.format || "Asian Parliamentary")}<br><b>Difficulty:</b> ${esc(m.difficulty || "Not specified")}</p><h3>Debate history</h3><p>${results.length ? results.map((d) => `${esc(fmtDate(d.date))} — ${esc(d.result)} (${esc(d.format || "Asian Parliamentary")})`).join("<br>") : "No result recorded for this motion yet."}</p>${isEditor() ? `<div class="actions"><button class="btn secondary" onclick="editMotion(${Number(m.id)})">Edit Motion</button><button class="btn" onclick="markMotionDebated(${Number(m.id)})">Mark as Debated</button><button class="btn gold" onclick="startResultForMotion(${Number(m.id)})">Add Debate Result</button></div>` : ""}`,
@@ -1502,9 +1387,7 @@ function viewMotionDetail(id) {
 }
 
 function renderResults() {
-  const q = (document.getElementById("results-search")?.value || "")
-      .trim()
-      .toLowerCase(),
+  const q = (document.getElementById("results-search")?.value || "").trim().toLowerCase(),
     seasonEl = document.getElementById("results-season-filter"),
     formatEl = document.getElementById("results-format-filter");
   const seasons = [
@@ -1520,35 +1403,21 @@ function renderResults() {
     const old = seasonEl.value || "all";
     seasonEl.innerHTML =
       '<option value="all">All seasons</option>' +
-      seasons
-        .map((y) => `<option value="${esc(y)}">${esc(y)}</option>`)
-        .join("");
+      seasons.map((y) => `<option value="${esc(y)}">${esc(y)}</option>`).join("");
     seasonEl.value = seasons.includes(old) || old === "all" ? old : "all";
   }
   const season = seasonEl?.value || "all",
     format = formatEl?.value || "all";
   const list = [...appState.debates]
     .filter((d) => {
-      const motion = appState.motions.find(
-        (m) => Number(m.id) === Number(d.motionId),
-      );
-      const searchable = [
-        d.date,
-        d.result,
-        d.season,
-        d.format,
-        motion?.text,
-        d.govTeam,
-        d.oppTeam,
-      ]
+      const motion = appState.motions.find((m) => Number(m.id) === Number(d.motionId));
+      const searchable = [d.date, d.result, d.season, d.format, motion?.text, d.govTeam, d.oppTeam]
         .join(" ")
         .toLowerCase();
       return (
         searchable.includes(q) &&
-        (season === "all" ||
-          String(d.season || String(d.date || "").slice(0, 4)) === season) &&
-        (format === "all" ||
-          String(d.format || "Asian Parliamentary") === format)
+        (season === "all" || String(d.season || String(d.date || "").slice(0, 4)) === season) &&
+        (format === "all" || String(d.format || "Asian Parliamentary") === format)
       );
     })
     .sort((a, b) => String(b.date).localeCompare(String(a.date)));
@@ -1560,15 +1429,11 @@ function renderResults() {
   document.getElementById("results-list").innerHTML = list.length
     ? list
         .map((d) => {
-          const motion = appState.motions.find(
-              (m) => Number(m.id) === Number(d.motionId),
-            ),
+          const motion = appState.motions.find((m) => Number(m.id) === Number(d.motionId)),
             participants = Array.isArray(d.participants) ? d.participants : [];
           const namedParticipants = participants.map((p) => ({
             p,
-            member: appState.members.find(
-              (m) => Number(m.id) === Number(p.memberId),
-            ),
+            member: appState.members.find((m) => Number(m.id) === Number(p.memberId)),
           }));
           const bestScore = participants.length
             ? Math.max(...participants.map((p) => Number(p.score) || 0))
@@ -1581,9 +1446,7 @@ function renderResults() {
               : [];
           const publicDebaters = `<div class="info-box"><div class="panel-head"><b>Debaters in this Session</b><span class="card-meta">${participants.length} participant${participants.length === 1 ? "" : "s"}</span></div>${namedParticipants.length ? `<div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px">${namedParticipants.map(({ p, member }) => `<div class="card" style="padding:10px"><b>${esc(member ? member.name : "Removed member")}</b><div class="card-meta">${esc(p.role || "Role not recorded")}</div></div>`).join("")}</div>` : "<p>No debater names were recorded for this session.</p>"}</div>`;
           const bestDebater = `<div class="info-box result-best"><b>🏅 Best Debater</b><span class="result-best-name">${bestDebaters.length ? bestDebaters.map(esc).join(", ") : participants.length ? "Not determined" : "Not recorded"}</span>${bestDebaters.length > 1 ? '<div class="card-meta">Joint recognition for the highest recorded individual score.</div>' : ""}</div>`;
-          const detailOpen = window.matchMedia("(min-width: 641px)").matches
-            ? " open"
-            : "";
+          const detailOpen = window.matchMedia("(min-width: 641px)").matches ? " open" : "";
           const scores = hasMemberAccess()
             ? `<div class="info-box"><div class="panel-head"><b>Speaker Scorecards</b><span class="card-meta">${participants.length} participant${participants.length === 1 ? "" : "s"}</span></div>${scorecardTableHtml(participants, "No individual scores recorded.")}</div>`
             : '<div class="info-box">🔒 Individual score breakdowns are available to signed-in members.</div>';
@@ -1596,8 +1459,7 @@ function renderResults() {
 function calendarNoteMarkup(value) {
   const notes = String(value || "No additional notes.").trim();
   const previewLimit = 190;
-  if (notes.length <= previewLimit)
-    return `<p class="info-box">${esc(notes)}</p>`;
+  if (notes.length <= previewLimit) return `<p class="info-box">${esc(notes)}</p>`;
   const preview = notes
     .slice(0, previewLimit)
     .replace(/\\s+\\S*$/, "")
@@ -1606,36 +1468,25 @@ function calendarNoteMarkup(value) {
 }
 
 function renderCalendar() {
-  const filter =
-      document.getElementById("calendar-type-filter")?.value || "all",
-    dateFilter =
-      document.getElementById("calendar-date-filter")?.value || "all",
-    featureFilter =
-      document.getElementById("calendar-feature-filter")?.value || "all",
-    query = (document.getElementById("calendar-search")?.value || "")
-      .trim()
-      .toLocaleLowerCase(),
+  const filter = document.getElementById("calendar-type-filter")?.value || "all",
+    dateFilter = document.getElementById("calendar-date-filter")?.value || "all",
+    featureFilter = document.getElementById("calendar-feature-filter")?.value || "all",
+    query = (document.getElementById("calendar-search")?.value || "").trim().toLocaleLowerCase(),
     today = localISODate(new Date());
   const list = [...(Array.isArray(appState.sessions) ? appState.sessions : [])]
     .filter((s) => validISODate(s.date))
     .filter(
       (s) =>
         filter === "all" ||
-        (filter === "debate"
-          ? sessionType(s) === "Debate"
-          : sessionType(s) !== "Debate"),
+        (filter === "debate" ? sessionType(s) === "Debate" : sessionType(s) !== "Debate"),
     )
     .filter(
-      (s) =>
-        dateFilter === "all" ||
-        (dateFilter === "past" ? s.date < today : s.date >= today),
+      (s) => dateFilter === "all" || (dateFilter === "past" ? s.date < today : s.date >= today),
     )
     .filter(
       (s) =>
         featureFilter === "all" ||
-        (featureFilter === "featured"
-          ? s.featured === true
-          : s.featured !== true),
+        (featureFilter === "featured" ? s.featured === true : s.featured !== true),
     )
     .filter(
       (s) =>
@@ -1682,19 +1533,14 @@ function populateScriptTopicControls() {
     const prior = filter.value || "all";
     filter.innerHTML =
       '<option value="all">All debated topics</option>' +
-      topics
-        .map((m) => `<option value="${Number(m.id)}">${esc(m.text)}</option>`)
-        .join("");
-    if (prior === "all" || topics.some((m) => String(m.id) === prior))
-      filter.value = prior;
+      topics.map((m) => `<option value="${Number(m.id)}">${esc(m.text)}</option>`).join("");
+    if (prior === "all" || topics.some((m) => String(m.id) === prior)) filter.value = prior;
   }
   const select = document.getElementById("script-motion");
   if (select) {
     const prior = select.value;
     select.innerHTML = topics.length
-      ? topics
-          .map((m) => `<option value="${Number(m.id)}">${esc(m.text)}</option>`)
-          .join("")
+      ? topics.map((m) => `<option value="${Number(m.id)}">${esc(m.text)}</option>`).join("")
       : '<option value="">No debated topics yet — record a debate first</option>';
     if (topics.some((m) => String(m.id) === prior)) select.value = prior;
     select.disabled = !topics.length;
@@ -1713,19 +1559,14 @@ function renderScripts() {
     return;
   }
   populateScriptTopicControls();
-  const topicFilter =
-    document.getElementById("scripts-topic-filter")?.value || "all";
-  const roleFilter =
-    document.getElementById("scripts-role-filter")?.value || "all";
-  const motionQuery = (
-    document.getElementById("scripts-motion-search")?.value || ""
-  )
+  const topicFilter = document.getElementById("scripts-topic-filter")?.value || "all";
+  const roleFilter = document.getElementById("scripts-role-filter")?.value || "all";
+  const motionQuery = (document.getElementById("scripts-motion-search")?.value || "")
     .trim()
     .toLocaleLowerCase();
   const debated = debatedMotions();
   const topics = debated.filter((m) => {
-    const matchesSelectedTopic =
-      topicFilter === "all" || String(m.id) === topicFilter;
+    const matchesSelectedTopic = topicFilter === "all" || String(m.id) === topicFilter;
     const matchesMotionSearch =
       !motionQuery ||
       String(m.text || "")
@@ -1749,9 +1590,7 @@ function renderScripts() {
   const el = document.getElementById("scripts-grid");
   const sections = topics
     .map((m) => {
-      const motionScripts = appState.scripts.filter(
-        (s) => Number(s.motionId) === Number(m.id),
-      );
+      const motionScripts = appState.scripts.filter((s) => Number(s.motionId) === Number(m.id));
       const availableRoles = roleList.filter((role) =>
         motionScripts.some((s) => normalizeDebateRole(s.role) === role),
       );
@@ -1768,22 +1607,17 @@ function renderScripts() {
         .join("");
       const visibleScriptCount = visibleRoles.reduce(
         (count, role) =>
-          count +
-          motionScripts.filter((s) => normalizeDebateRole(s.role) === role)
-            .length,
+          count + motionScripts.filter((s) => normalizeDebateRole(s.role) === role).length,
         0,
       );
       const roleChips = availableRoles.length
-        ? availableRoles
-            .map((role) => `<span class="role-chip">${esc(role)}</span>`)
-            .join("")
+        ? availableRoles.map((role) => `<span class="role-chip">${esc(role)}</span>`).join("")
         : `<span class="card-meta">No speaker roles yet</span>`;
       const emptyRoleMessage =
         roleFilter === "all"
           ? "No scripts are available for this motion yet."
           : `No scripts are available for ${esc(roleFilter)} on this motion yet.`;
-      const roleContent =
-        roleSections || `<p class="subtle">${emptyRoleMessage}</p>`;
+      const roleContent = roleSections || `<p class="subtle">${emptyRoleMessage}</p>`;
       return `<details class="panel script-motion"><summary class="script-motion-summary"><div class="script-motion-heading"><span class="pill gold">${esc(m.category || "Debated motion")}</span><h3>${esc(m.text)}</h3><span class="script-motion-count">${visibleScriptCount} script${visibleScriptCount === 1 ? "" : "s"} · ${availableRoles.length} speaker role${availableRoles.length === 1 ? "" : "s"}</span></div><div class="script-motion-roles">${roleChips}</div></summary><div class="script-motion-content">${isEditor() ? `<div class="script-motion-actions"><button class="btn secondary small" onclick="openAdminScriptForTopic(${Number(m.id)})">+ Add script</button></div>` : ""}${roleContent}</div></details>`;
     })
     .join("");
@@ -1802,8 +1636,7 @@ function renderScripts() {
     topicFilter === "all" && !motionQuery && unassigned.length
       ? `<details class="panel script-motion legacy-script-group"><summary class="script-motion-summary"><div class="script-motion-heading"><h3>Unassigned legacy resources</h3><span class="script-motion-count">${unassigned.length} resource${unassigned.length === 1 ? "" : "s"}</span></div></summary><div class="script-motion-content"><p class="subtle">These older resources are not linked to a debated topic yet.</p><div class="cards">${unassigned.map((s) => `<article class="card"><h3>${esc(s.title)}</h3><p>${esc(s.body || "")}</p>${isEditor() ? `<button class="btn secondary small" onclick="editScript(${Number(s.id)})">Assign topic / Edit</button>` : ""}</article>`).join("")}</div></div></details>`
       : "";
-  el.innerHTML =
-    (sections || `<div class="empty">${esc(emptyMessage)}</div>`) + legacy;
+  el.innerHTML = (sections || `<div class="empty">${esc(emptyMessage)}</div>`) + legacy;
 }
 
 /* ===== Achievements ===== */
@@ -1814,8 +1647,7 @@ function achTypeClass(t) {
 function achSorted(list) {
   return [...list].sort(
     (a, b) =>
-      String(b.year || "").localeCompare(String(a.year || "")) ||
-      Number(b.id) - Number(a.id),
+      String(b.year || "").localeCompare(String(a.year || "")) || Number(b.id) - Number(a.id),
   );
 }
 function achievementCardHtml(a, admin) {
@@ -1829,9 +1661,7 @@ function renderAchievements() {
   if (!grid) return;
   const editor = isEditor();
   document.getElementById("ach-admin-bar")?.classList.toggle("hidden", !editor);
-  document
-    .getElementById("ach-admin-note")
-    ?.classList.toggle("hidden", !editor);
+  document.getElementById("ach-admin-note")?.classList.toggle("hidden", !editor);
   const type = document.getElementById("ach-type-filter")?.value || "all";
   const list = achSorted(appState.achievements || []).filter(
     (a) => type === "all" || a.type === type,
@@ -1843,9 +1673,10 @@ function renderAchievements() {
 function renderHomeAchievements() {
   const el = document.getElementById("home-achievements");
   if (!el) return;
-  const list = achSorted(
-    (appState.achievements || []).filter((a) => a.featured === true),
-  ).slice(0, 6);
+  const list = achSorted((appState.achievements || []).filter((a) => a.featured === true)).slice(
+    0,
+    6,
+  );
   el.innerHTML = list.length
     ? list.map((a) => achievementCardHtml(a, false)).join("")
     : `<div class="empty" style="grid-column:1/-1">No achievements have been selected for the Home page yet.${isEditor() ? " Open Achievements and choose “Feature on Home.”" : ""}</div>`;
@@ -1856,9 +1687,7 @@ function openAchievementEditor(id = null) {
     return;
   }
   const a =
-    id === null
-      ? null
-      : (appState.achievements || []).find((x) => Number(x.id) === Number(id));
+    id === null ? null : (appState.achievements || []).find((x) => Number(x.id) === Number(id));
   if (id !== null && !a) return;
   openDetailModal(
     a ? "Edit Achievement" : "Add Achievement",
@@ -1877,10 +1706,7 @@ function saveAchievementEditor(event, id) {
     return;
   }
   if (!Array.isArray(appState.achievements)) appState.achievements = [];
-  const a =
-    id === null
-      ? null
-      : appState.achievements.find((x) => Number(x.id) === Number(id));
+  const a = id === null ? null : appState.achievements.find((x) => Number(x.id) === Number(id));
   if (a) {
     Object.assign(a, { type, year, text, featured });
     audit("Updated achievement", type + " · " + text.slice(0, 80));
@@ -1896,31 +1722,20 @@ function saveAchievementEditor(event, id) {
 }
 function toggleAchievementFeatured(id) {
   if (!isEditor()) return;
-  const a = (appState.achievements || []).find(
-    (x) => Number(x.id) === Number(id),
-  );
+  const a = (appState.achievements || []).find((x) => Number(x.id) === Number(id));
   if (!a) return;
   a.featured = a.featured !== true;
-  audit(
-    a.featured ? "Featured achievement" : "Unfeatured achievement",
-    a.text.slice(0, 80),
-  );
+  audit(a.featured ? "Featured achievement" : "Unfeatured achievement", a.text.slice(0, 80));
   saveState();
   renderAchievements();
   renderHomeAchievements();
-  notify(
-    a.featured ? "Now shown on the Home page." : "Removed from the Home page.",
-  );
+  notify(a.featured ? "Now shown on the Home page." : "Removed from the Home page.");
 }
 function deleteAchievement(id) {
   if (!isEditor()) return;
-  const a = (appState.achievements || []).find(
-    (x) => Number(x.id) === Number(id),
-  );
+  const a = (appState.achievements || []).find((x) => Number(x.id) === Number(id));
   if (!a || !confirm("Delete this achievement?")) return;
-  appState.achievements = appState.achievements.filter(
-    (x) => Number(x.id) !== Number(id),
-  );
+  appState.achievements = appState.achievements.filter((x) => Number(x.id) !== Number(id));
   audit("Deleted achievement", a.text.slice(0, 80));
   saveState();
   renderAchievements();
@@ -1937,9 +1752,7 @@ function switchAdminTab(tab) {
   }
   document
     .querySelectorAll(".admin-tab")
-    .forEach((el) =>
-      el.classList.toggle("active", el.id === "admin-sub-" + tab),
-    );
+    .forEach((el) => el.classList.toggle("active", el.id === "admin-sub-" + tab));
   document
     .querySelectorAll(".tab-btn")
     .forEach((el) => el.classList.toggle("active", el.dataset.tab === tab));
@@ -1963,8 +1776,7 @@ function renderAdmin() {
   if (!appState.motions.length)
     motionSelect.innerHTML = '<option value="">Create a motion first</option>';
   const container = document.getElementById("debater-score-inputs");
-  if (!container.children.length && appState.members.length)
-    addDebaterScoreRow();
+  if (!container.children.length && appState.members.length) addDebaterScoreRow();
   renderAdminMotionList();
   renderAdminSessionList();
   renderAdminMemberList();
@@ -1981,9 +1793,7 @@ function renderAdminDebateScores() {
   el.innerHTML = debates.length
     ? debates
         .map((d) => {
-          const motion = appState.motions.find(
-            (m) => Number(m.id) === Number(d.motionId),
-          );
+          const motion = appState.motions.find((m) => Number(m.id) === Number(d.motionId));
           const parts = Array.isArray(d.participants) ? d.participants : [];
           return `<article class="card"><div class="card-top"><span class="card-meta">${fmtDate(d.date)}</span><span class="pill blue">${esc(d.result)}</span></div><h3>${esc(motion ? motion.text : "Motion unavailable")}</h3>${scorecardTableHtml(parts, "No individual debater scores recorded for this debate.")}<div class="actions" style="margin-top:0"><button class="btn small" type="button" onclick="addScoreToDebate(${Number(d.id)})">+ Add Debater Score</button><button class="btn secondary small" type="button" onclick="editDebate(${Number(d.id)})">Edit Debate & Scores</button></div></article>`;
         })
@@ -2028,26 +1838,13 @@ function debaterOptionsHtml(selectedId, query) {
   const q = String(query || "")
     .trim()
     .toLowerCase();
-  const list = appState.members.filter(
-    (m) => !q || String(m.name).toLowerCase().includes(q),
-  );
-  if (!list.length)
-    return '<option value="" disabled selected>No debater found</option>';
-  const hasSelection =
-    selectedId !== undefined &&
-    selectedId !== null &&
-    String(selectedId) !== "";
-  const found =
-    hasSelection && list.some((m) => Number(m.id) === Number(selectedId));
-  const sel = found
-    ? Number(selectedId)
-    : hasSelection && q
-      ? Number(list[0].id)
-      : null;
+  const list = appState.members.filter((m) => !q || String(m.name).toLowerCase().includes(q));
+  if (!list.length) return '<option value="" disabled selected>No debater found</option>';
+  const hasSelection = selectedId !== undefined && selectedId !== null && String(selectedId) !== "";
+  const found = hasSelection && list.some((m) => Number(m.id) === Number(selectedId));
+  const sel = found ? Number(selectedId) : hasSelection && q ? Number(list[0].id) : null;
   const placeholder =
-    !hasSelection && !q
-      ? '<option value="" selected disabled>Choose a debater…</option>'
-      : "";
+    !hasSelection && !q ? '<option value="" selected disabled>Choose a debater…</option>' : "";
   return (
     placeholder +
     list
@@ -2079,9 +1876,7 @@ function addScoreToDebate(id) {
   if (!isEditor()) return;
   editDebate(id);
   addEditDebaterRow();
-  const rows = document.querySelectorAll(
-      "#edit-debate-participants .score-row",
-    ),
+  const rows = document.querySelectorAll("#edit-debate-participants .score-row"),
     last = rows[rows.length - 1];
   if (last) {
     last.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -2127,14 +1922,8 @@ function handleRecordDebate(event) {
   const date = document.getElementById("new-deb-date").value,
     motionId = Number(document.getElementById("new-deb-motion").value),
     result = document.getElementById("new-deb-result").value;
-  const rows = [
-    ...document.querySelectorAll("#debater-score-inputs .score-row"),
-  ];
-  if (
-    !date ||
-    !motionId ||
-    !appState.motions.some((m) => Number(m.id) === motionId)
-  ) {
+  const rows = [...document.querySelectorAll("#debater-score-inputs .score-row")];
+  if (!date || !motionId || !appState.motions.some((m) => Number(m.id) === motionId)) {
     notify("Choose a date and a valid motion.");
     return;
   }
@@ -2161,9 +1950,7 @@ function handleRecordDebate(event) {
     participants.push({ memberId, role, ...parts });
   }
   const format = document.getElementById("new-deb-format").value,
-    season =
-      document.getElementById("new-deb-season").value.trim() ||
-      date.slice(0, 4),
+    season = document.getElementById("new-deb-season").value.trim() || date.slice(0, 4),
     govTeam = document.getElementById("new-deb-gov").value.trim(),
     oppTeam = document.getElementById("new-deb-opp").value.trim();
   appState.debates.push({
@@ -2180,10 +1967,7 @@ function handleRecordDebate(event) {
   });
   const motion = appState.motions.find((m) => Number(m.id) === motionId);
   if (motion) motion.status = "Debated";
-  audit(
-    "Recorded debate",
-    `${date} · ${motion.text} · ${participants.length} speaker scorecards`,
-  );
+  audit("Recorded debate", `${date} · ${motion.text} · ${participants.length} speaker scorecards`);
   saveState();
   document.getElementById("debate-entry-form").reset();
   document.getElementById("debater-score-inputs").innerHTML = "";
@@ -2236,14 +2020,9 @@ function revealCalendarItem(id) {
   switchPage("calendar");
   const card = [...document.querySelectorAll("#calendar-grid .card")].find(
     (el) =>
-      el.querySelector(
-        "button[onclick*='openSessionEditor(" + Number(id) + ")']",
-      ) ||
+      el.querySelector("button[onclick*='openSessionEditor(" + Number(id) + ")']") ||
       el.querySelector("h3")?.textContent ===
-        String(
-          appState.sessions.find((s) => Number(s.id) === Number(id))?.title ||
-            "",
-        ),
+        String(appState.sessions.find((s) => Number(s.id) === Number(id))?.title || ""),
   );
   if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
 }
@@ -2271,9 +2050,7 @@ function handleCreateSession(event) {
     `${type}: ${title} · ${date}${featured ? " · Featured on Home" : ""}`,
   );
   if (!saveState()) {
-    appState.sessions = appState.sessions.filter(
-      (s) => Number(s.id) !== Number(id),
-    );
+    appState.sessions = appState.sessions.filter((s) => Number(s.id) !== Number(id));
     return;
   }
   event.target.reset();
@@ -2290,9 +2067,7 @@ function handleCreateMember(event) {
     notify("Enter a member name.");
     return;
   }
-  if (
-    appState.members.some((m) => m.name.toLowerCase() === name.toLowerCase())
-  ) {
+  if (appState.members.some((m) => m.name.toLowerCase() === name.toLowerCase())) {
     notify("A member with that name already exists.");
     return;
   }
@@ -2319,9 +2094,7 @@ function deleteMotion(id) {
   if (!isEditor()) return;
   const m = appState.motions.find((x) => Number(x.id) === Number(id));
   if (!m) return;
-  const linked = appState.debates.filter(
-    (d) => Number(d.motionId) === Number(id),
-  );
+  const linked = appState.debates.filter((d) => Number(d.motionId) === Number(id));
   const msg = linked.length
     ? `Delete this motion AND its ${linked.length} recorded debate result(s) with scorecards? This will change member rankings and cannot be undone.`
     : "Delete this motion?";
@@ -2330,12 +2103,8 @@ function deleteMotion(id) {
     "Deleted motion",
     m.text + (linked.length ? ` (and ${linked.length} debate result(s))` : ""),
   );
-  appState.debates = appState.debates.filter(
-    (d) => Number(d.motionId) !== Number(id),
-  );
-  appState.motions = appState.motions.filter(
-    (x) => Number(x.id) !== Number(id),
-  );
+  appState.debates = appState.debates.filter((d) => Number(d.motionId) !== Number(id));
+  appState.motions = appState.motions.filter((x) => Number(x.id) !== Number(id));
   saveState();
   closeDetailModal();
   renderAllPortalViews();
@@ -2352,9 +2121,7 @@ async function deleteMember(id) {
     ? `Permanently delete ${m.name}? They appear in ${played} recorded debate(s). Their name will show as "Removed member" in those results and they will leave the leaderboard. This cannot be undone. (To keep their history, use "Remove from leaderboard" instead.)`
     : `Permanently delete ${m.name}?`;
   if (!confirm(msg)) return;
-  appState.members = appState.members.filter(
-    (x) => Number(x.id) !== Number(id),
-  );
+  appState.members = appState.members.filter((x) => Number(x.id) !== Number(id));
   audit("Deleted member", m.name);
   saveState();
   if (sb) {
@@ -2389,9 +2156,7 @@ function deleteSession(id) {
   if (!x) return;
   if (!confirm("Delete this session?")) return;
   audit("Deleted session", x.title);
-  appState.sessions = appState.sessions.filter(
-    (s) => Number(s.id) !== Number(id),
-  );
+  appState.sessions = appState.sessions.filter((s) => Number(s.id) !== Number(id));
   saveState();
   renderAdminSessionList();
   renderCalendar();
@@ -2475,10 +2240,7 @@ function openMotionEditor(id = null) {
     notify("Editor access is required.");
     return;
   }
-  const m =
-    id === null
-      ? null
-      : appState.motions.find((x) => Number(x.id) === Number(id));
+  const m = id === null ? null : appState.motions.find((x) => Number(x.id) === Number(id));
   if (id !== null && !m) return;
   openDetailModal(
     m ? "Edit Motion" : "Add Motion",
@@ -2498,10 +2260,7 @@ function saveMotionEditor(event, id) {
     notify("Motion text and category are required.");
     return;
   }
-  let m =
-    id === null
-      ? null
-      : appState.motions.find((x) => Number(x.id) === Number(id));
+  let m = id === null ? null : appState.motions.find((x) => Number(x.id) === Number(id));
   if (m) {
     Object.assign(m, {
       text,
@@ -2568,27 +2327,16 @@ function startResultForMotion(id) {
     const season = document.getElementById("new-deb-season");
     if (season) season.value = date.value.slice(0, 4);
   }
-  notify(
-    "Motion selected. Its status will update when the debate result is saved.",
-  );
+  notify("Motion selected. Its status will update when the debate result is saved.");
 }
 function openSessionEditor(id = null) {
   if (!isEditor()) {
     notify("Editor access is required.");
     return;
   }
-  const x =
-    id === null
-      ? null
-      : appState.sessions.find((v) => Number(v.id) === Number(id));
+  const x = id === null ? null : appState.sessions.find((v) => Number(v.id) === Number(id));
   if (id !== null && !x) return;
-  const types = [
-    "Debate",
-    "Event",
-    "Tournament",
-    "Workshop",
-    "Training Session",
-  ];
+  const types = ["Debate", "Event", "Tournament", "Workshop", "Training Session"];
   openDetailModal(
     x ? "Edit Calendar Item" : "Add Calendar Item",
     `<form onsubmit="saveSessionEditor(event,${x ? Number(x.id) : "null"})"><div class="form-grid"><div class="field full"><label for="calendar-editor-title">Title</label><input class="input" id="calendar-editor-title" required maxlength="180" value="${esc(x?.title || "")}" placeholder="Weekly AP Debate / Workshop"></div><div class="field"><label for="calendar-editor-date">Date</label><input class="input" type="date" id="calendar-editor-date" required value="${esc(x?.date || localISODate(new Date()))}"></div><div class="field"><label for="calendar-editor-type">Item Type</label><select class="input" id="calendar-editor-type">${types.map((t) => `<option value="${t}" ${(x ? sessionType(x) : "Debate") === t ? "selected" : ""}>${t === "Event" ? "Club Event" : t}</option>`).join("")}</select></div><div class="field full"><label for="calendar-editor-location">Location</label><input class="input" id="calendar-editor-location" required maxlength="180" value="${esc(x?.location || "")}" placeholder="Auditorium / Room / Online"></div><div class="field full"><label for="calendar-editor-notes">Description / Notes</label><textarea class="input" id="calendar-editor-notes" rows="3" maxlength="1200">${esc(x?.notes || "")}</textarea></div><div class="field full"><label><input type="checkbox" id="calendar-editor-featured" ${x?.featured === true ? "checked" : ""}> Feature this item on the Home page</label><small class="subtle">Only future items marked “Feature this item on the Home page” appear in the Home page sections.</small></div></div><div class="form-actions"><button type="button" class="btn secondary" onclick="closeDetailModal()">Cancel</button><button class="btn" type="submit">${x ? "Save Changes" : "Add to Calendar"}</button></div></form>`,
@@ -2607,10 +2355,7 @@ function saveSessionEditor(event, id) {
     notify("Enter a title, valid date, and location.");
     return;
   }
-  let x =
-    id === null
-      ? null
-      : appState.sessions.find((v) => Number(v.id) === Number(id));
+  let x = id === null ? null : appState.sessions.find((v) => Number(v.id) === Number(id));
   if (id !== null && !x) {
     notify("Calendar item not found.");
     return;
@@ -2626,19 +2371,14 @@ function saveSessionEditor(event, id) {
     audit("Scheduled calendar item", `${type}: ${title} · ${date}`);
   }
   if (!saveState()) {
-    if (isNew)
-      appState.sessions = appState.sessions.filter(
-        (s) => Number(s.id) !== Number(x.id),
-      );
+    if (isNew) appState.sessions = appState.sessions.filter((s) => Number(s.id) !== Number(x.id));
     else Object.assign(x, old);
     return;
   }
   closeDetailModal();
   renderAdmin();
   revealCalendarItem(x.id);
-  notify(
-    isNew ? `${x.title} added to Calendar.` : `${x.title} updated in Calendar.`,
-  );
+  notify(isNew ? `${x.title} added to Calendar.` : `${x.title} updated in Calendar.`);
 }
 function editSession(id) {
   openSessionEditor(id);
@@ -2649,19 +2389,14 @@ function toggleSessionFeatured(id) {
   if (!x) return;
   x.featured = x.featured !== true;
   audit(
-    x.featured
-      ? "Featured calendar item on Home"
-      : "Removed calendar item from Home features",
+    x.featured ? "Featured calendar item on Home" : "Removed calendar item from Home features",
     x.title,
   );
   saveState();
   renderCalendar();
   renderHome();
   notify(
-    x.title +
-      (x.featured
-        ? " will be featured on Home."
-        : " is no longer specially featured."),
+    x.title + (x.featured ? " will be featured on Home." : " is no longer specially featured."),
   );
 }
 function editMember(id) {
@@ -2676,8 +2411,7 @@ function editMember(id) {
   }
   if (
     appState.members.some(
-      (x) =>
-        x.id !== m.id && x.name.toLowerCase() === name.trim().toLowerCase(),
+      (x) => x.id !== m.id && x.name.toLowerCase() === name.trim().toLowerCase(),
     )
   ) {
     notify("That member name already exists.");
@@ -2699,8 +2433,7 @@ function editDebate(id) {
   document.getElementById("edit-debate-id").value = String(d.id);
   document.getElementById("edit-debate-date").value = d.date || "";
   document.getElementById("edit-debate-result").value = d.result || "Draw";
-  document.getElementById("edit-debate-format").value =
-    d.format || "Asian Parliamentary";
+  document.getElementById("edit-debate-format").value = d.format || "Asian Parliamentary";
   document.getElementById("edit-debate-season").value =
     d.season || String(d.date || "").slice(0, 4);
   document.getElementById("edit-debate-gov").value = d.govTeam || "";
@@ -2713,8 +2446,7 @@ function editDebate(id) {
   const wrap = document.getElementById("edit-debate-participants");
   wrap.innerHTML = "";
   const savedParticipants = Array.isArray(d.participants) ? d.participants : [];
-  if (savedParticipants.length)
-    savedParticipants.forEach((p) => addEditDebaterRow(p));
+  if (savedParticipants.length) savedParticipants.forEach((p) => addEditDebaterRow(p));
   else addEditDebaterRow();
   document.getElementById("debate-edit-modal").classList.add("open");
 }
@@ -2764,9 +2496,7 @@ async function saveDebateEditor(event) {
     return;
   }
   const participantWrap = document.getElementById("edit-debate-participants");
-  const rows = [...participantWrap.children].filter((el) =>
-    el.classList.contains("score-row"),
-  );
+  const rows = [...participantWrap.children].filter((el) => el.classList.contains("score-row"));
   if (!rows.length) {
     notify("A debate must have at least one debater score.");
     return;
@@ -2774,9 +2504,7 @@ async function saveDebateEditor(event) {
   const participants = [],
     seen = new Set();
   for (const row of rows) {
-    const memberId = Number(
-        row.querySelector(".edit-participant-member").value,
-      ),
+    const memberId = Number(row.querySelector(".edit-participant-member").value),
       role = row.querySelector(".edit-participant-role").value;
     if (!memberId) {
       notify(
@@ -2805,16 +2533,13 @@ async function saveDebateEditor(event) {
       judges: res.judges,
     });
   }
-  const previousMotion = appState.motions.find(
-    (m) => Number(m.id) === Number(d.motionId),
-  );
+  const previousMotion = appState.motions.find((m) => Number(m.id) === Number(d.motionId));
   if (
     previousMotion &&
     Number(previousMotion.id) !== motionId &&
     previousMotion.autoDebated === true &&
     !appState.debates.some(
-      (x) =>
-        Number(x.id) !== id && Number(x.motionId) === Number(previousMotion.id),
+      (x) => Number(x.id) !== id && Number(x.motionId) === Number(previousMotion.id),
     )
   ) {
     previousMotion.status = "Upcoming";
@@ -2825,14 +2550,10 @@ async function saveDebateEditor(event) {
     motionId,
     result,
     format: document.getElementById("edit-debate-format").value,
-    season:
-      document.getElementById("edit-debate-season").value.trim() ||
-      date.slice(0, 4),
+    season: document.getElementById("edit-debate-season").value.trim() || date.slice(0, 4),
     govTeam: document.getElementById("edit-debate-gov").value.trim(),
     oppTeam: document.getElementById("edit-debate-opp").value.trim(),
-    judgeCount: clampJudges(
-      document.getElementById("edit-debate-judges").value,
-    ),
+    judgeCount: clampJudges(document.getElementById("edit-debate-judges").value),
     participants,
   });
   const motion = appState.motions.find((m) => Number(m.id) === motionId);
@@ -2856,9 +2577,7 @@ async function saveDebateEditor(event) {
   renderLeaderboard();
   renderHome();
   renderMemberDashboardIfVisible();
-  notify(
-    `Debate and all ${participants.length} debater scorecards saved successfully.`,
-  );
+  notify(`Debate and all ${participants.length} debater scorecards saved successfully.`);
 }
 
 function deleteDebate(id) {
@@ -2866,18 +2585,12 @@ function deleteDebate(id) {
   const d = appState.debates.find((x) => Number(x.id) === Number(id));
   if (
     !d ||
-    !confirm(
-      "Delete this debate result and its scorecard? This will update member rankings.",
-    )
+    !confirm("Delete this debate result and its scorecard? This will update member rankings.")
   )
     return;
   audit("Deleted debate", `${d.date} · debate #${d.id}`);
-  appState.debates = appState.debates.filter(
-    (x) => Number(x.id) !== Number(id),
-  );
-  const motion = appState.motions.find(
-    (m) => Number(m.id) === Number(d.motionId),
-  );
+  appState.debates = appState.debates.filter((x) => Number(x.id) !== Number(id));
+  const motion = appState.motions.find((m) => Number(m.id) === Number(d.motionId));
   if (
     motion &&
     motion.autoDebated === true &&
@@ -2941,9 +2654,7 @@ function renderAdminScriptList() {
             String(a.role || "").localeCompare(String(b.role || "")),
         )
         .map((s) => {
-          const m = appState.motions.find(
-            (x) => Number(x.id) === Number(s.motionId),
-          );
+          const m = appState.motions.find((x) => Number(x.id) === Number(s.motionId));
           return `<article class="card"><div class="card-top"><b>${esc(s.title)}</b><span class="pill gold">${esc(s.category)}</span><span class="pill blue">${esc(normalizeDebateRole(s.role))}</span></div><p><b>Topic:</b> ${esc(m?.text || s.topic || "Unassigned legacy resource")}</p><p class="card-meta">${esc(s.author)}</p><p>${esc(s.body)}</p><div class="actions"><button class="btn secondary small" onclick="editScript(${Number(s.id)})">Edit</button><button class="btn danger small" onclick="deleteScript(${Number(s.id)})">Delete</button></div></article>`;
         })
         .join("")
@@ -2976,9 +2687,7 @@ function editScript(id) {
     notify("Record a debate before assigning scripts to topics.");
     return;
   }
-  const topicChoices = topicList
-    .map((m, i) => `${i + 1}. ${m.text}`)
-    .join("\n");
+  const topicChoices = topicList.map((m, i) => `${i + 1}. ${m.text}`).join("\n");
   const currentIndex = Math.max(
     0,
     topicList.findIndex((m) => Number(m.id) === Number(s.motionId)),
@@ -3044,9 +2753,7 @@ function deleteScript(id) {
   const s = appState.scripts.find((x) => Number(x.id) === Number(id));
   if (!s || !confirm("Delete this training resource?")) return;
   audit("Deleted script", s.title);
-  appState.scripts = appState.scripts.filter(
-    (x) => Number(x.id) !== Number(id),
-  );
+  appState.scripts = appState.scripts.filter((x) => Number(x.id) !== Number(id));
   saveState();
   renderAdminScriptList();
   renderScripts();
@@ -3064,9 +2771,7 @@ function closeDetailModal() {
 function viewScriptDetail(id) {
   const x = appState.scripts.find((s) => Number(s.id) === Number(id));
   if (!x) return;
-  const motion = appState.motions.find(
-    (m) => Number(m.id) === Number(x.motionId),
-  );
+  const motion = appState.motions.find((m) => Number(m.id) === Number(x.motionId));
   openDetailModal(
     x.title,
     `<p><span class="pill gold">${esc(x.category)}</span> <span class="role-chip">${esc(x.role || "General / All Roles")}</span></p><p><b>Debated topic:</b> ${esc(motion?.text || x.topic || "Unassigned legacy resource")}</p><p><b>Author:</b> ${esc(x.author || "Not specified")}</p><div>${esc(x.body || "")}</div><div class="form-actions"><button class="btn" onclick="copyScript(${Number(x.id)})">Copy Script</button></div>`,
@@ -3103,9 +2808,7 @@ function toggleDarkMode() {
   try {
     localStorage.setItem("cpscrdc_theme", on ? "dark" : "light");
   } catch (e) {}
-  document
-    .querySelectorAll(".theme-toggle")
-    .forEach((b) => (b.textContent = on ? "☀" : "☾"));
+  document.querySelectorAll(".theme-toggle").forEach((b) => (b.textContent = on ? "☀" : "☾"));
 }
 /* Member and account administration */
 let people = [];
@@ -3247,11 +2950,7 @@ async function setPersonRole(id, role) {
     rejected: `Remove portal access for ${x.display_name}?`,
   }[role];
   if (msg && !confirm(msg)) return;
-  const { data, error } = await sb
-    .from("profiles")
-    .update({ role })
-    .eq("id", id)
-    .select();
+  const { data, error } = await sb.from("profiles").update({ role }).eq("id", id).select();
   if (error || !data || !data.length) {
     notify("Could not update: " + (error ? error.message : "not allowed"));
     return;
@@ -3271,15 +2970,10 @@ async function setPersonRole(id, role) {
 }
 async function ensureDebater(x) {
   if (!sb || !isEditor()) return null;
-  if (
-    x.member_id &&
-    appState.members.some((m) => Number(m.id) === Number(x.member_id))
-  )
+  if (x.member_id && appState.members.some((m) => Number(m.id) === Number(x.member_id)))
     return x.member_id;
   const taken = new Set(
-    people
-      .filter((v) => v.member_id && v.id !== x.id)
-      .map((v) => Number(v.member_id)),
+    people.filter((v) => v.member_id && v.id !== x.id).map((v) => Number(v.member_id)),
   );
   let m = appState.members.find(
     (v) =>
@@ -3309,9 +3003,7 @@ async function addPersonAsDebater(id) {
   if (!x || !isEditor()) return;
   const mid = await ensureDebater(x);
   if (!mid) {
-    notify(
-      "Could not add to the debater list. Make sure the latest SQL fix was run in Supabase.",
-    );
+    notify("Could not add to the debater list. Make sure the latest SQL fix was run in Supabase.");
     return;
   }
   renderAllPortalViews();
@@ -3391,20 +3083,12 @@ function restorePortalData(event) {
         if (
           data[k] !== undefined &&
           (!Array.isArray(data[k]) ||
-            data[k].some(
-              (item) =>
-                !item || typeof item !== "object" || Array.isArray(item),
-            ))
+            data[k].some((item) => !item || typeof item !== "object" || Array.isArray(item)))
         )
-          throw new Error(
-            "Invalid field: " + k + " must be an array of objects.",
-          );
+          throw new Error("Invalid field: " + k + " must be an array of objects.");
       if (!Array.isArray(data.auditLog) && data.auditLog !== undefined)
         throw new Error("Invalid audit log.");
-      if (
-        !confirm("Restore this backup? Current portal data will be replaced.")
-      )
-        return;
+      if (!confirm("Restore this backup? Current portal data will be replaced.")) return;
       // Validate everything before changing live state, then commit the snapshot as one unit.
       const previous = appState;
       const next = { ...appState };
@@ -3478,30 +3162,22 @@ function renderMemberDashboard() {
     ) ||
     appState.members.find(
       (m) =>
-        String(m.name).toLowerCase() ===
-          String(user.displayName || "").toLowerCase() ||
-        String(m.name).toLowerCase() ===
-          String(user.username || user.email || "").toLowerCase(),
+        String(m.name).toLowerCase() === String(user.displayName || "").toLowerCase() ||
+        String(m.name).toLowerCase() === String(user.username || user.email || "").toLowerCase(),
     );
-  const activeSeason =
-    document.getElementById("leaderboard-season-select")?.value || "all";
+  const activeSeason = document.getElementById("leaderboard-season-select")?.value || "all";
   const myDebates = linked
     ? appState.debates
         .filter(
           (d) =>
             (activeSeason === "all" ||
-              String(d.season || String(d.date || "").slice(0, 4)) ===
-                String(activeSeason)) &&
-            (d.participants || []).some(
-              (p) => Number(p.memberId) === Number(linked.id),
-            ),
+              String(d.season || String(d.date || "").slice(0, 4)) === String(activeSeason)) &&
+            (d.participants || []).some((p) => Number(p.memberId) === Number(linked.id)),
         )
         .sort((a, b) => String(b.date).localeCompare(String(a.date)))
     : [];
   const stats = linked
-    ? calculateLeaderboardStats(activeSeason).find(
-        (x) => Number(x.id) === Number(linked.id),
-      )
+    ? calculateLeaderboardStats(activeSeason).find((x) => Number(x.id) === Number(linked.id))
     : null;
   const el = document.getElementById("member-dashboard-content");
   const displayName = linked
@@ -3513,16 +3189,12 @@ function renderMemberDashboard() {
   const historyAction = adminViewing
     ? '<button class="btn secondary small" onclick="returnToAdminMembers()">Back to Members</button>'
     : '<button class="btn secondary small" onclick="switchPage(\'results\')">All Results</button>';
-  const breakdownOpen = window.matchMedia("(min-width: 641px)").matches
-    ? " open"
-    : "";
+  const breakdownOpen = window.matchMedia("(min-width: 641px)").matches ? " open" : "";
   el.innerHTML = `<div class="stats"><div class="stat"><div><strong>${esc(displayName)}</strong><span>${adminViewing ? "Admin view · " : "Signed in as "}${esc(user.role)}</span></div></div><div class="stat"><div><strong>${stats ? stats.debatesPlayed : 0}</strong><span>Debates recorded</span></div></div><div class="stat"><div><strong>${stats && stats.average !== null ? fmt2(stats.average) + "%" : "—"}</strong><span>Average score</span></div></div><div class="stat"><div><strong>${stats ? fmt2(stats.totalPoints) : "0.00"}</strong><span>Total points</span></div></div></div><div class="panel"><div class="panel-head member-dashboard-head"><h3>${historyTitle}</h3><div class="actions">${historyAction}</div></div>${
     linked && myDebates.length
       ? myDebates
           .map((d) => {
-            const m = appState.motions.find(
-              (x) => Number(x.id) === Number(d.motionId),
-            );
+            const m = appState.motions.find((x) => Number(x.id) === Number(d.motionId));
             const part = (d.participants || []).find(
               (p) => Number(p.memberId) === Number(linked.id),
             );
@@ -3534,10 +3206,7 @@ function renderMemberDashboard() {
 }
 
 function renderMemberDashboardIfVisible() {
-  if (
-    document.getElementById("page-member")?.classList.contains("active") &&
-    hasMemberAccess()
-  )
+  if (document.getElementById("page-member")?.classList.contains("active") && hasMemberAccess())
     renderMemberDashboard();
 }
 
@@ -3552,9 +3221,7 @@ document.getElementById("year").textContent = new Date().getFullYear();
 try {
   if (localStorage.getItem("cpscrdc_theme") === "dark") {
     document.body.classList.add("dark");
-    document
-      .querySelectorAll(".theme-toggle")
-      .forEach((b) => (b.textContent = "☀"));
+    document.querySelectorAll(".theme-toggle").forEach((b) => (b.textContent = "☀"));
   }
 } catch (e) {}
 (async () => {
