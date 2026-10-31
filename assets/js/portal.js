@@ -1367,6 +1367,14 @@ function renderResults() {
     : '<div class="empty">No debate results match these filters.</div>';
 }
 
+function calendarNoteMarkup(value) {
+  const notes = String(value || "No additional notes.").trim();
+  const previewLimit = 190;
+  if (notes.length <= previewLimit) return `<p class="info-box">${esc(notes)}</p>`;
+  const preview = notes.slice(0, previewLimit).replace(/\\s+\\S*$/, "").trimEnd();
+  return `<details class="calendar-notes"><summary>${esc(preview)}…</summary><p class="info-box">${esc(notes)}</p></details>`;
+}
+
 function renderCalendar() {
   const filter = document.getElementById("calendar-type-filter")?.value || "all",
     dateFilter = document.getElementById("calendar-date-filter")?.value || "all",
@@ -1413,7 +1421,7 @@ function renderCalendar() {
     ? list
         .map(
           (s) =>
-            `<article class="card"><div class="card-top"><span class="green">▦ ${fmtDate(s.date)}</span><span class="pill ${sessionType(s) === "Debate" ? "gold" : sessionType(s) === "Tournament" ? "blue" : ""}">${esc(sessionType(s))}</span></div><h3>${esc(s.title)}</h3><p class="card-meta">📍 ${esc(s.location || "Location to be announced")}</p><p class="info-box">${esc(s.notes || "No additional notes.")}</p>${s.featured === true ? '<p class="pill gold">★ Featured on Home</p>' : ""}${isEditor() ? `<div class="actions"><button class="btn secondary small" onclick="openSessionEditor(${Number(s.id)})">Edit Item</button><button class="btn ${s.featured === true ? "secondary" : "gold"} small" onclick="toggleSessionFeatured(${Number(s.id)})">${s.featured === true ? "Remove Home Feature" : "★ Feature on Home"}</button><button class="btn danger small" onclick="deleteSession(${Number(s.id)})">Delete</button></div>` : ""}</article>`,
+            `<article class="card"><div class="card-top"><span class="green">▦ ${fmtDate(s.date)}</span><span class="pill ${sessionType(s) === "Debate" ? "gold" : sessionType(s) === "Tournament" ? "blue" : ""}">${esc(sessionType(s))}</span></div><h3>${esc(s.title)}</h3><p class="card-meta">📍 ${esc(s.location || "Location to be announced")}</p>${calendarNoteMarkup(s.notes)}${s.featured === true ? '<p class="pill gold">★ Featured on Home</p>' : ""}${isEditor() ? `<div class="actions"><button class="btn secondary small" onclick="openSessionEditor(${Number(s.id)})">Edit Item</button><button class="btn ${s.featured === true ? "secondary" : "gold"} small" onclick="toggleSessionFeatured(${Number(s.id)})">${s.featured === true ? "Remove Home Feature" : "★ Feature on Home"}</button><button class="btn danger small" onclick="deleteSession(${Number(s.id)})">Delete</button></div>` : ""}</article>`,
         )
         .join("")
     : `<div class="empty" style="grid-column:1/-1">No ${filter === "debate" ? "debates" : filter === "events" ? "events or training sessions" : "calendar items"} match these filters. Try changing the date filter or add a calendar item.</div>`;
