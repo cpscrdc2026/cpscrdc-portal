@@ -3754,3 +3754,34 @@ body.dark .member-history-card {
     font-size: 13px;
   }
 }
+
+
+/* Correct the generated judge criteria grid on narrow phones. */
+@media (max-width: 760px) {
+  #page-admin .criteria-box,
+  #page-admin .judge-cards,
+  #page-admin .judge-card,
+  #page-admin .criteria-grid {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  #page-admin .criteria-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px;
+  }
+  #page-admin .criteria-grid > *,
+  #page-admin .criteria-grid label,
+  #page-admin .criteria-grid input,
+  #page-admin .criteria-grid select {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  #page-admin .score-row,
+  #page-admin .score-row-stack {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
