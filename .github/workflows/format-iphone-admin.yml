@@ -1,0 +1,30 @@
+name: Format iPhone admin CSS
+on:
+  push:
+    branches:
+      - fix/iphone-admin-layout
+permissions:
+  contents: write
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/iphone-admin-layout
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx prettier --write assets/css/portal.css
+      - name: Commit formatting
+        run: |
+          if ! git diff --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add assets/css/portal.css
+            git commit -m "Format iPhone admin CSS"
+            git push
+          fi
