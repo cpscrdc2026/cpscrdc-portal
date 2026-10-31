@@ -28,7 +28,7 @@ To format changed files, run `npm run format`. Before opening a pull request, ru
 - `supabase/migrations/` contains reviewed database policy and function changes.
 - `.github/workflows/` contains code checks and the scheduled Supabase health check.
 
-Legacy point-adjustment entries may remain in old backups for compatibility; they are not editable or included in ranking totals.
+Previously saved point adjustments remain included in ranking totals and backups, but admins can no longer add or remove adjustments in the portal.
 
 The app uses the Supabase publishable key in the browser. Publishable keys are intended for public clients; database access must remain protected by row-level security. Never put a Supabase secret or service-role key in this repository.
 

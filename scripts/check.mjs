@@ -28,6 +28,27 @@ assert.doesNotMatch(
   /data-tab=["\']adjustments["\']|id=["\']admin-sub-adjustments["\']|id=["\']adj-points["\']/i,
   "point adjustment controls must not appear in the admin UI",
 );
+const expectedAdminTabs = [
+  "debates",
+  "motions",
+  "sessions",
+  "members",
+  "scripts",
+  "users",
+  "scoring",
+  "audit",
+  "data",
+];
+const adminStart = html.indexOf('<section id="page-admin"');
+const adminDebates = html.indexOf('<div id="admin-sub-debates"', adminStart);
+const adminTabs = [...html.slice(adminStart, adminDebates).matchAll(/data-tab="([^"]+)"/g)].map(
+  ([, tab]) => tab,
+);
+assert.deepEqual(
+  adminTabs,
+  expectedAdminTabs,
+  "all admin tabs except Point Adjustments must remain available",
+);
 assert.ok(logo.byteLength > 100, "club logo asset must exist");
 assert.match(
   html,
@@ -50,10 +71,10 @@ assert.ok(
   leaderboardStart >= 0 && leaderboardEnd > leaderboardStart,
   "leaderboard calculation must exist",
 );
-assert.doesNotMatch(
+assert.match(
   app.slice(leaderboardStart, leaderboardEnd),
-  /adjustments/,
-  "legacy adjustments must not affect leaderboard totals",
+  /totalPoints:\s*Math\.round\(\(totalScore\s*\+\s*adjustments\)/,
+  "existing saved adjustments must continue to contribute to current totals",
 );
 
 const ids = [...html.matchAll(/\bid=["']([^"']+)["']/gi)].map(([, id]) => id);
