@@ -13,7 +13,7 @@ const defaultState = {
   motions: [
     {
       id: 1,
-      text: "This house would ban single-use plastics nationwide.",
+      text: "This house would ban single use plastics nationwide.",
       category: "Environment",
       status: "Upcoming",
       info: "Governments face waste management crises alongside industrial cost barriers.",
@@ -87,7 +87,7 @@ const defaultState = {
       title: "Internal Sparring Tournament",
       date: "2026-05-27",
       location: "Main Hall",
-      notes: "Preliminary rounds for the upcoming inter-school championship.",
+      notes: "Preliminary rounds for the upcoming inter school championship.",
     },
   ],
   scripts: [
@@ -487,7 +487,7 @@ function criteriaInputsHtml(role, values = {}) {
   return cfg.criteria
     .map((c) => {
       const v = values ? values[c.key] : undefined;
-      return `<div class="field criterion"><label>${c.label} <small>(${c.bn})</small> · 0–${c.max}</label><input class="input crit-input" data-key="${c.key}" data-max="${c.max}" type="number" min="0" max="${c.max}" step="0.1" placeholder="0–${c.max}" value="${v === undefined || v === null ? "" : v}" required oninput="updateCriteriaTotal(this)"></div>`;
+      return `<div class="field criterion"><label>${c.label} <small>(${c.bn})</small> · 0 to ${c.max}</label><input class="input crit-input" data-key="${c.key}" data-max="${c.max}" type="number" min="0" max="${c.max}" step="0.1" placeholder="0 to ${c.max}" value="${v === undefined || v === null ? "" : v}" required oninput="updateCriteriaTotal(this)"></div>`;
     })
     .join("");
 }
@@ -658,7 +658,7 @@ function criteriaSummary(p) {
     .map((c) => `${c.label}: <b>${f(p.criteria[c.key])}</b>/${c.max}`)
     .join(" · ");
   if (multi)
-    html += `<div class="judge-list">Average of ${p.judges.length} judges — ${p.judges.map((j, i) => `J${i + 1}: <b>${fmt2(j.score)}</b>`).join(" · ")}</div>`;
+    html += `<div class="judge-list">Average of ${p.judges.length} judges  ·  ${p.judges.map((j, i) => `J${i + 1}: <b>${fmt2(j.score)}</b>`).join(" · ")}</div>`;
   return html;
 }
 function scorecardTableHtml(parts, emptyMsg) {
@@ -666,7 +666,7 @@ function scorecardTableHtml(parts, emptyMsg) {
     ? parts
         .map((p) => {
           const m = appState.members.find((x) => Number(x.id) === Number(p.memberId));
-          return `<tr><td>${esc(m ? m.name : "Removed member")}</td><td>${esc(p.role || "—")}</td><td class="criteria-cell">${criteriaSummary(p)}</td><td><b>${fmt2(p.score)}/${participantMax(p)}</b></td></tr>`;
+          return `<tr><td>${esc(m ? m.name : "Removed member")}</td><td>${esc(p.role || "Not recorded")}</td><td class="criteria-cell">${criteriaSummary(p)}</td><td><b>${fmt2(p.score)}/${participantMax(p)}</b></td></tr>`;
         })
         .join("")
     : `<tr><td colspan="4">${emptyMsg}</td></tr>`;
@@ -1161,7 +1161,7 @@ function validISODate(value) {
 function scheduleDateBadge(date) {
   const d = localDateFromISO(date);
   if (Number.isNaN(d.getTime()))
-    return `<div class="schedule-date"><span>Date</span><strong>—</strong></div>`;
+    return `<div class="schedule-date"><span>Date</span><strong> · </strong></div>`;
   return `<div class="schedule-date"><span>${esc(d.toLocaleDateString(undefined, { month: "short" }))}</span><strong>${d.getDate()}</strong><span>${esc(d.toLocaleDateString(undefined, { weekday: "short" }))}</span></div>`;
 }
 function scheduleItemHTML(item) {
@@ -1243,7 +1243,7 @@ function renderHome() {
     ? rows
         .map(
           (x, i) =>
-            `<tr><td class="rank">#${i + 1}</td><td>${esc(x.name)}</td><td>${x.debatesPlayed}</td><td class="green">${x.average === null ? "—" : fmt2(x.average) + "%"}</td><td>${fmt2(x.totalPoints)} pts</td></tr>`,
+            `<tr><td class="rank">#${i + 1}</td><td>${esc(x.name)}</td><td>${x.debatesPlayed}</td><td class="green">${x.average === null ? "Not available" : fmt2(x.average) + "%"}</td><td>${fmt2(x.totalPoints)} pts</td></tr>`,
         )
         .join("")
     : emptyRow(homeLimit, "No debater records yet.");
@@ -1359,7 +1359,7 @@ function renderLeaderboard() {
             : !x.active
               ? "Inactive"
               : "Provisional";
-          return `<tr><td><span class="pill ${x.excludedFromLeaderboard || !x.active ? "red" : "gold"}">${label}</span></td><td>${esc(x.name)}</td><td>${x.debatesPlayed}</td><td>${x.average === null ? "—" : fmt2(x.average) + "%"}</td><td>${fmt2(x.totalPoints)} pts</td>${leaderboardManagementButtons(x)}</tr>`;
+          return `<tr><td><span class="pill ${x.excludedFromLeaderboard || !x.active ? "red" : "gold"}">${label}</span></td><td>${esc(x.name)}</td><td>${x.debatesPlayed}</td><td>${x.average === null ? " · " : fmt2(x.average) + "%"}</td><td>${fmt2(x.totalPoints)} pts</td>${leaderboardManagementButtons(x)}</tr>`;
         })
         .join("")
     : emptyRow(
@@ -1409,7 +1409,7 @@ function viewMotionDetail(id) {
   const results = appState.debates.filter((d) => Number(d.motionId) === Number(m.id));
   openDetailModal(
     m.text,
-    `<p><span class="pill blue">${esc(m.category)}</span> <span class="pill">${esc(m.status)}</span></p><h3>Info slide</h3><p>${esc(m.info || "No additional information supplied.")}</p><p><b>Format:</b> ${esc(m.format || "Asian Parliamentary")}<br><b>Difficulty:</b> ${esc(m.difficulty || "Not specified")}</p><h3>Debate history</h3><p>${results.length ? results.map((d) => `${esc(fmtDate(d.date))} — ${esc(d.result)} (${esc(d.format || "Asian Parliamentary")})`).join("<br>") : "No result recorded for this motion yet."}</p>${isEditor() ? `<div class="actions"><button class="btn secondary" onclick="editMotion(${Number(m.id)})">Edit Motion</button><button class="btn" onclick="markMotionDebated(${Number(m.id)})">Mark as Debated</button><button class="btn gold" onclick="startResultForMotion(${Number(m.id)})">Add Debate Result</button></div>` : ""}`,
+    `<p><span class="pill blue">${esc(m.category)}</span> <span class="pill">${esc(m.status)}</span></p><h3>Info slide</h3><p>${esc(m.info || "No additional information supplied.")}</p><p><b>Format:</b> ${esc(m.format || "Asian Parliamentary")}<br><b>Difficulty:</b> ${esc(m.difficulty || "Not specified")}</p><h3>Debate history</h3><p>${results.length ? results.map((d) => `${esc(fmtDate(d.date))}  ·  ${esc(d.result)} (${esc(d.format || "Asian Parliamentary")})`).join("<br>") : "No result recorded for this motion yet."}</p>${isEditor() ? `<div class="actions"><button class="btn secondary" onclick="editMotion(${Number(m.id)})">Edit Motion</button><button class="btn" onclick="markMotionDebated(${Number(m.id)})">Mark as Debated</button><button class="btn gold" onclick="startResultForMotion(${Number(m.id)})">Add Debate Result</button></div>` : ""}`,
   );
 }
 
@@ -1568,7 +1568,7 @@ function populateScriptTopicControls() {
     const prior = select.value;
     select.innerHTML = topics.length
       ? topics.map((m) => `<option value="${Number(m.id)}">${esc(m.text)}</option>`).join("")
-      : '<option value="">No debated topics yet — record a debate first</option>';
+      : '<option value="">No debated topics yet  ·  record a debate first</option>';
     if (topics.some((m) => String(m.id) === prior)) select.value = prior;
     select.disabled = !topics.length;
   }
@@ -1718,7 +1718,7 @@ function openAchievementEditor(id = null) {
   if (id !== null && !a) return;
   openDetailModal(
     a ? "Edit Achievement" : "Add Achievement",
-    `<form onsubmit="saveAchievementEditor(event,${a ? Number(a.id) : "null"})"><div class="form-grid"><div class="field"><label for="ach-editor-type">Achievement Type</label><select class="input" id="ach-editor-type" required>${ACH_TYPES.map((t) => `<option ${a && a.type === t ? "selected" : ""}>${t}</option>`).join("")}</select></div><div class="field"><label for="ach-editor-year">Year / Date (optional)</label><input class="input" id="ach-editor-year" maxlength="24" placeholder="e.g. 2026" value="${esc(a?.year || "")}"></div><div class="field full"><label for="ach-editor-text">Achievement</label><textarea class="input" id="ach-editor-text" rows="4" required maxlength="600" placeholder="e.g. Champion — Inter Cant Debate Championship 2026">${esc(a?.text || "")}</textarea></div><div class="field full"><label><input type="checkbox" id="ach-editor-featured" ${a && a.featured === true ? "checked" : ""}> Feature this achievement in “Latest Achievements” on the Home page</label></div></div><div class="form-actions"><button type="button" class="btn secondary" onclick="closeDetailModal()">Cancel</button><button class="btn" type="submit">${a ? "Save Achievement" : "Add Achievement"}</button></div></form>`,
+    `<form onsubmit="saveAchievementEditor(event,${a ? Number(a.id) : "null"})"><div class="form-grid"><div class="field"><label for="ach-editor-type">Achievement Type</label><select class="input" id="ach-editor-type" required>${ACH_TYPES.map((t) => `<option ${a && a.type === t ? "selected" : ""}>${t}</option>`).join("")}</select></div><div class="field"><label for="ach-editor-year">Year / Date (optional)</label><input class="input" id="ach-editor-year" maxlength="24" placeholder="e.g. 2026" value="${esc(a?.year || "")}"></div><div class="field full"><label for="ach-editor-text">Achievement</label><textarea class="input" id="ach-editor-text" rows="4" required maxlength="600" placeholder="e.g. Champion  ·  Inter Cant Debate Championship 2026">${esc(a?.text || "")}</textarea></div><div class="field full"><label><input type="checkbox" id="ach-editor-featured" ${a && a.featured === true ? "checked" : ""}> Feature this achievement in “Latest Achievements” on the Home page</label></div></div><div class="form-actions"><button type="button" class="btn secondary" onclick="closeDetailModal()">Cancel</button><button class="btn" type="submit">${a ? "Save Achievement" : "Add Achievement"}</button></div></form>`,
   );
 }
 function saveAchievementEditor(event, id) {
@@ -1899,7 +1899,7 @@ function renderScoringRulesReference(force) {
     const c = SCORING_CONFIG[r],
       t = sum(r),
       ok = t === c.max;
-    return `<article class="card"><span class="pill blue">${c.side} · ${c.max} points</span><h3>${r} <small>(${c.bn})</small></h3><ul style="margin:8px 0 0;padding-left:18px">${c.criteria.map((x) => `<li>${x.label} <small>(${x.bn})</small> — max <b>${x.max}</b></li>`).join("")}</ul><div class="rules-check ${ok ? "ok" : "bad"}">${ok ? "✓" : "✗"} Criteria add up to ${t} / ${c.max}</div></article>`;
+    return `<article class="card"><span class="pill blue">${c.side} · ${c.max} points</span><h3>${r} <small>(${c.bn})</small></h3><ul style="margin:8px 0 0;padding-left:18px">${c.criteria.map((x) => `<li>${x.label} <small>(${x.bn})</small>  ·  max <b>${x.max}</b></li>`).join("")}</ul><div class="rules-check ${ok ? "ok" : "bad"}">${ok ? "✓" : "✗"} Criteria add up to ${t} / ${c.max}</div></article>`;
   }).join("");
   const teamRow = (side) => {
     const roles = SCORING_ROLES.filter((r) => SCORING_CONFIG[r].side === side),
@@ -1918,7 +1918,7 @@ function renderScoringRulesReference(force) {
   const poiTable = `<div class="table-wrap" style="margin:16px 0"><table style="min-width:480px"><thead><tr><th>Speaker role</th><th>Bengali title</th><th>POI allocation</th></tr></thead><tbody>${poiRows}</tbody></table></div>`;
   host.innerHTML =
     judgeBox +
-    `<div class="table-wrap" style="margin-bottom:16px"><table style="min-width:480px"><thead><tr><th>Side</th><th>Speakers</th><th>Team maximum</th></tr></thead><tbody>${teamRow("Government")}${teamRow("Opposition")}</tbody></table></div><div class="cards">${cards}</div><h3 style="margin-top:22px">Points of Information (আপত্তি মোকাবেলা) — quick reference</h3>` +
+    `<div class="table-wrap" style="margin-bottom:16px"><table style="min-width:480px"><thead><tr><th>Side</th><th>Speakers</th><th>Team maximum</th></tr></thead><tbody>${teamRow("Government")}${teamRow("Opposition")}</tbody></table></div><div class="cards">${cards}</div><h3 style="margin-top:22px">Points of Information (আপত্তি মোকাবেলা)  ·  quick reference</h3>` +
     poiTable;
 }
 /* ===== Searchable debater picker (search box + drop-down) ===== */
@@ -2562,7 +2562,7 @@ function addEditDebaterRow(participant = {}) {
   const role = scoringRole(participant.role) || SCORING_ROLES[0];
   const legacyNote =
     participant.memberId !== undefined && !participant.criteria
-      ? `<div class="notice" style="grid-column:1/-1">This is an older Matter/Manner/Method score. The total was spread across the new criteria — please review and adjust each one.</div>`
+      ? `<div class="notice" style="grid-column:1/-1">This is an older Matter/Manner/Method score. The total was spread across the new criteria  ·  please review and adjust each one.</div>`
       : "";
   row.innerHTML = `<div class="score-person"><label>Debater</label>${debaterPickerHtml("edit-participant-member", participant.memberId)}<label style="margin-top:7px">Role</label><select class="edit-participant-role" aria-label="Debate role" onchange="swapCriteria(this,'.score-row')">${roleOptionsHtml(role)}</select></div>${legacyNote}${criteriaBoxHtml(role, participantJudges(participant), clampJudges(document.getElementById("edit-debate-judges").value))}<button type="button" class="btn danger small" onclick="this.closest('.score-row').remove()">Remove</button>`;
   wrap.appendChild(row);
@@ -3278,7 +3278,7 @@ function renderMemberDashboard() {
     ? '<button class="btn secondary small" onclick="returnToAdminMembers()">Back to Members</button>'
     : '<button class="btn secondary small" onclick="switchPage(\'results\')">All Results</button>';
   const breakdownOpen = window.matchMedia("(min-width: 641px)").matches ? " open" : "";
-  el.innerHTML = `<div class="stats"><div class="stat"><div><strong>${esc(displayName)}</strong><span>${adminViewing ? "Admin view · " : "Signed in as "}${esc(user.role)}</span></div></div><div class="stat"><div><strong>${stats ? stats.debatesPlayed : 0}</strong><span>Debates recorded</span></div></div><div class="stat"><div><strong>${stats && stats.average !== null ? fmt2(stats.average) + "%" : "—"}</strong><span>Average score</span></div></div><div class="stat"><div><strong>${stats ? fmt2(stats.totalPoints) : "0.00"}</strong><span>Total points</span></div></div></div><div class="panel"><div class="panel-head member-dashboard-head"><h3>${historyTitle}</h3><div class="actions">${historyAction}</div></div>${
+  el.innerHTML = `<div class="stats"><div class="stat"><div><strong>${esc(displayName)}</strong><span>${adminViewing ? "Admin view · " : "Signed in as "}${esc(user.role)}</span></div></div><div class="stat"><div><strong>${stats ? stats.debatesPlayed : 0}</strong><span>Debates recorded</span></div></div><div class="stat"><div><strong>${stats && stats.average !== null ? fmt2(stats.average) + "%" : "Not available"}</strong><span>Average score</span></div></div><div class="stat"><div><strong>${stats ? fmt2(stats.totalPoints) : "0.00"}</strong><span>Total points</span></div></div></div><div class="panel"><div class="panel-head member-dashboard-head"><h3>${historyTitle}</h3><div class="actions">${historyAction}</div></div>${
     linked && myDebates.length
       ? myDebates
           .map((d) => {
