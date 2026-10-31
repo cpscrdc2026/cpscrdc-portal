@@ -3,10 +3,11 @@ import { readFile } from "node:fs/promises";
 import vm from "node:vm";
 
 const root = new URL("../", import.meta.url);
-const [html, css, app] = await Promise.all([
+const [html, css, app, logo] = await Promise.all([
   readFile(new URL("index.html", root), "utf8"),
   readFile(new URL("assets/css/portal.css", root), "utf8"),
   readFile(new URL("assets/js/portal.js", root), "utf8"),
+  readFile(new URL("assets/images/club-logo.jpg", root)),
 ]);
 
 assert.match(html, /<!doctype html>/i, "index.html must declare HTML5");
@@ -22,6 +23,12 @@ assert.match(
   "portal application script must be linked",
 );
 assert.ok(css.trim().length > 0, "portal stylesheet must not be empty");
+assert.ok(logo.byteLength > 100, "club logo asset must exist");
+assert.match(
+  html,
+  /src=["\']\.\/assets\/images\/club-logo\.jpg["\']/i,
+  "club logo must be a separate asset",
+);
 
 const scriptTags = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
 const inlineScripts = scriptTags.filter(([, attributes]) => !/\bsrc\s*=/.test(attributes));

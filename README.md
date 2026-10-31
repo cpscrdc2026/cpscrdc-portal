@@ -21,6 +21,7 @@ To format changed files, run `npm run format`. Before opening a pull request, ru
 
 - `index.html` contains the page structure and navigation.
 - `assets/css/portal.css` contains the portal's styles and responsive layouts.
+- `assets/images/club-logo.jpg` stores the club logo as a standalone image.
 - `assets/js/portal.js` contains the browser application. It remains a classic script because the page's accessible controls use inline event attributes that call global functions.
 - `scripts/check.mjs` validates the HTML shell, local asset links, JavaScript syntax, unique element IDs, and public Supabase configuration.
 - `scripts/ping-supabase.mjs` checks the Supabase Auth health endpoint for the scheduled workflow.
