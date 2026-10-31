@@ -996,7 +996,9 @@ function calculateLeaderboardStats(season = "all") {
     );
     const totalScore = scores.reduce((sum, n) => sum + n, 0);
     const pctTotal = pcts.reduce((sum, n) => sum + n, 0);
-
+    const adjustments = appState.adjustments
+      .filter((a) => Number(a.memberId) === Number(m.id))
+      .reduce((sum, a) => sum + (Number(a.points) || 0), 0);
     return {
       id: m.id,
       name: m.name,
@@ -1005,7 +1007,7 @@ function calculateLeaderboardStats(season = "all") {
       debatesPlayed: scores.length,
       average: pcts.length ? Math.round((pctTotal / pcts.length) * 100) / 100 : null,
       scorePoints: Math.round(totalScore * 100) / 100,
-      totalPoints: Math.round(totalScore * 100) / 100,
+      totalPoints: Math.round((totalScore + adjustments) * 100) / 100,
     };
   });
 }

@@ -24,7 +24,8 @@ Run the portal from a local web server or the deployed site. Use a narrow phone-
 - Search the Members section and open a member dashboard; confirm it shows that member's debate history.
 - Check that editor/admin actions appear only where expected.
 - Add or edit a calendar item, motion, achievement, or result in a safe test environment, then confirm the updated item renders and the list filters still work.
-- Confirm there is no Point Adjustments tab or form, and totals reflect recorded debate scores only.
+- Confirm Point Adjustments is absent and the Debate Results, Motions, Calendar Sessions, Members, Training Scripts, Members & Admins, AP Scoring Setup, Audit Logs, and Backup & Restore tabs remain available.
+- Confirm leaderboard totals are unchanged after the tab is removed; existing saved adjustments are still included.
 - Confirm the editor view retains its full leaderboard.
 
 ## Responsive and keyboard checks
