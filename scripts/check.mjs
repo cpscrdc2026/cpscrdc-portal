@@ -29,6 +29,7 @@ assert.doesNotMatch(
   "point adjustment controls must not appear in the admin UI",
 );
 const expectedAdminTabs = [
+  "homepage",
   "debates",
   "motions",
   "sessions",
