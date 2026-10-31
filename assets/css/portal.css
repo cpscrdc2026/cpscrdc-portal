@@ -198,7 +198,12 @@ main {
 .hero {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(115deg, #0875bd 0%, var(--navy) 48%, var(--green) 100%);
+  background: linear-gradient(
+    115deg,
+    #0875bd 0%,
+    var(--navy) 48%,
+    var(--green) 100%
+  );
   color: #fff;
   border-radius: 20px;
   padding: clamp(26px, 5vw, 54px);
@@ -791,7 +796,10 @@ footer {
 }
 #edit-debate-participants .score-row {
   display: grid;
-  grid-template-columns: minmax(150px, 1.4fr) minmax(150px, 1.2fr) minmax(100px, 0.7fr) auto;
+  grid-template-columns: minmax(150px, 1.4fr) minmax(150px, 1.2fr) minmax(
+      100px,
+      0.7fr
+    ) auto;
   gap: 8px;
   align-items: center;
   background: #f7f8fb;
@@ -1597,7 +1605,12 @@ body.dark .judge-total {
   overflow: hidden;
   border-radius: 16px;
   padding: 20px 20px 16px;
-  background: radial-gradient(120% 140% at 0% 0%, #26197a 0%, #120c45 55%, #0b0830 100%);
+  background: radial-gradient(
+    120% 140% at 0% 0%,
+    #26197a 0%,
+    #120c45 55%,
+    #0b0830 100%
+  );
   border: 1px solid #ffffff22;
   color: #fff;
   display: grid;
@@ -2174,4 +2187,3 @@ body.dark .member-score-details > summary {
 body.dark .calendar-notes > summary::after {
   color: #4ade80;
 }
-
