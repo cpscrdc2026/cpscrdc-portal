@@ -5,6 +5,7 @@ import vm from 'node:vm';
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 assert.match(html, /<!doctype html>/i, 'index.html must declare HTML5');
 assert.match(html, /<\/html>\s*$/i, 'index.html must close the root element');
+assert.doesNotMatch(html, /<\/small>>/, 'small helper text must not leave stray markup characters');
 
 const inlineScripts = [...html.matchAll(/<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)];
 assert.equal(inlineScripts.length, 1, 'expected one inline application script');
