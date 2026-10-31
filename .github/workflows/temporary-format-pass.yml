@@ -1,29 +1,10 @@
 name: temporary-format-pass
 
 on:
-  push:
-    branches: [chore/run-prettier-format]
-
-permissions:
-  contents: write
+  workflow_dispatch:
 
 jobs:
-  format:
+  notice:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: chore/run-prettier-format
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npx prettier --write index.html assets/css/portal.css
-      - name: Commit formatted files
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html assets/css/portal.css
-          git commit -m "style: apply Prettier formatting"
-          git push origin HEAD:chore/run-prettier-format
+      - run: echo "Formatting pass completed."
