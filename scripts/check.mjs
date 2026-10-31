@@ -23,6 +23,11 @@ assert.match(
   "portal application script must be linked",
 );
 assert.ok(css.trim().length > 0, "portal stylesheet must not be empty");
+assert.doesNotMatch(
+  html,
+  /data-tab=["\']adjustments["\']|id=["\']admin-sub-adjustments["\']|id=["\']adj-points["\']/i,
+  "point adjustment controls must not appear in the admin UI",
+);
 assert.ok(logo.byteLength > 100, "club logo asset must exist");
 assert.match(
   html,
@@ -34,6 +39,22 @@ const scriptTags = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
 const inlineScripts = scriptTags.filter(([, attributes]) => !/\bsrc\s*=/.test(attributes));
 assert.equal(inlineScripts.length, 0, "application code must stay in its external source file");
 new vm.Script(app, { filename: "assets/js/portal.js" });
+assert.doesNotMatch(
+  app,
+  /function (?:handleCreateAdjustment|renderAdjustmentsList|deleteAdjustment)\s*\(/,
+  "point adjustment actions must stay retired",
+);
+const leaderboardStart = app.indexOf("function calculateLeaderboardStats");
+const leaderboardEnd = app.indexOf("function emptyRow", leaderboardStart);
+assert.ok(
+  leaderboardStart >= 0 && leaderboardEnd > leaderboardStart,
+  "leaderboard calculation must exist",
+);
+assert.doesNotMatch(
+  app.slice(leaderboardStart, leaderboardEnd),
+  /adjustments/,
+  "legacy adjustments must not affect leaderboard totals",
+);
 
 const ids = [...html.matchAll(/\bid=["']([^"']+)["']/gi)].map(([, id]) => id);
 const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);

@@ -24,6 +24,7 @@ Run the portal from a local web server or the deployed site. Use a narrow phone-
 - Search the Members section and open a member dashboard; confirm it shows that member's debate history.
 - Check that editor/admin actions appear only where expected.
 - Add or edit a calendar item, motion, achievement, or result in a safe test environment, then confirm the updated item renders and the list filters still work.
+- Confirm there is no Point Adjustments tab or form, and totals reflect recorded debate scores only.
 - Confirm the editor view retains its full leaderboard.
 
 ## Responsive and keyboard checks
