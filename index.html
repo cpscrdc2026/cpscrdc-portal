@@ -429,8 +429,8 @@ function hasMemberAccess(){return !!appState.currentUser&&(appState.currentUser.
 function showPage(pageId, updateUrl=true){
  const allowed=["home","leaderboard","motions","results","calendar","achievements","scripts","admin","member"];
  if(!allowed.includes(pageId))pageId="home";
- if((pageId==="scripts"||pageId==="member")&&!hasMemberAccess()){if(appState.currentUser){notify("Your membership request is awaiting admin approval.")}else{notify("Please sign in as a member to access member features.");openLoginModal()}pageId="home"}
- if(pageId==="admin"&&!isEditor()){notify("Admin access is required.");if(!appState.currentUser)openLoginModal();pageId="home"}
+ if((pageId==="scripts"||pageId==="member")&&!hasMemberAccess()){if(appState.currentUser){notify("Your membership request is awaiting admin approval.")}else{notify("This section is for members. Public pages remain open to everyone.")}pageId="home"}
+ if(pageId==="admin"&&!isEditor()){if(appState.currentUser){notify("Admin access is required.")}pageId="home"}
  document.querySelectorAll(".page").forEach(el=>el.classList.toggle("active",el.id==="page-"+pageId));
  document.querySelectorAll(".nav-btn").forEach(el=>el.classList.toggle("active",el.dataset.page===pageId));
  const nav=document.getElementById("nav-main");if(nav)nav.classList.remove("open");
