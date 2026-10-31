@@ -47,13 +47,27 @@ const defaultState = {
         {
           memberId: 1,
           role: "Prime Minister",
-          criteria: { definition: 17, scope: 17, position: 17, evidence: 17, delivery: 8, poi: 9 },
+          criteria: {
+            definition: 17,
+            scope: 17,
+            position: 17,
+            evidence: 17,
+            delivery: 8,
+            poi: 9,
+          },
           score: 85,
         },
         {
           memberId: 2,
           role: "Leader of Opposition",
-          criteria: { definition: 17, scope: 16, position: 16, evidence: 16, delivery: 8, poi: 9 },
+          criteria: {
+            definition: 17,
+            scope: 16,
+            position: 16,
+            evidence: 16,
+            delivery: 8,
+            poi: 9,
+          },
           score: 82,
         },
       ],
@@ -177,8 +191,18 @@ const SCORING_CONFIG = {
         bn: "স্বীয় অবস্থান ব্যাখ্যা",
         max: 20,
       },
-      { key: "evidence", label: "Data, Facts & Evidence", bn: "তথ্য এবং তত্ত্ব", max: 20 },
-      { key: "delivery", label: "Pronunciation & Delivery", bn: "উচ্চারণ এবং বাকরীতি", max: 10 },
+      {
+        key: "evidence",
+        label: "Data, Facts & Evidence",
+        bn: "তথ্য এবং তত্ত্ব",
+        max: 20,
+      },
+      {
+        key: "delivery",
+        label: "Pronunciation & Delivery",
+        bn: "উচ্চারণ এবং বাকরীতি",
+        max: 10,
+      },
       { key: "poi", label: "Handling POIs", bn: "আপত্তি মোকাবেলা", max: 10 },
     ],
   },
@@ -211,7 +235,12 @@ const SCORING_CONFIG = {
         bn: "সাময়িক অবস্থান প্রদান",
         max: 20,
       },
-      { key: "delivery", label: "Pronunciation & Delivery", bn: "উচ্চারণ এবং বাকরীতি", max: 10 },
+      {
+        key: "delivery",
+        label: "Pronunciation & Delivery",
+        bn: "উচ্চারণ এবং বাকরীতি",
+        max: 10,
+      },
     ],
   },
   "Government Member": {
@@ -243,7 +272,12 @@ const SCORING_CONFIG = {
         bn: "সাময়িক অবস্থান প্রদান",
         max: 20,
       },
-      { key: "delivery", label: "Pronunciation & Delivery", bn: "উচ্চারণ এবং বাকরীতি", max: 10 },
+      {
+        key: "delivery",
+        label: "Pronunciation & Delivery",
+        bn: "উচ্চারণ এবং বাকরীতি",
+        max: 10,
+      },
       { key: "poi", label: "Handling POIs", bn: "আপত্তি মোকাবেলা", max: 10 },
     ],
   },
@@ -270,8 +304,18 @@ const SCORING_CONFIG = {
         bn: "দলীয় অবস্থান ব্যাখ্যা",
         max: 20,
       },
-      { key: "evidence", label: "Data, Facts & Evidence", bn: "তথ্য এবং তত্ত্ব", max: 20 },
-      { key: "delivery", label: "Pronunciation & Delivery", bn: "উচ্চারণ এবং বাকরীতি", max: 10 },
+      {
+        key: "evidence",
+        label: "Data, Facts & Evidence",
+        bn: "তথ্য এবং তত্ত্ব",
+        max: 20,
+      },
+      {
+        key: "delivery",
+        label: "Pronunciation & Delivery",
+        bn: "উচ্চারণ এবং বাকরীতি",
+        max: 10,
+      },
       { key: "poi", label: "Handling POIs", bn: "আপত্তি মোকাবেলা", max: 10 },
     ],
   },
@@ -298,7 +342,12 @@ const SCORING_CONFIG = {
         bn: "পূর্ববর্তী বক্তার যুক্তি খণ্ডন",
         max: 20,
       },
-      { key: "delivery", label: "Pronunciation & Delivery", bn: "উচ্চারণ এবং বাকরীতি", max: 10 },
+      {
+        key: "delivery",
+        label: "Pronunciation & Delivery",
+        bn: "উচ্চারণ এবং বাকরীতি",
+        max: 10,
+      },
       { key: "poi", label: "Handling POIs", bn: "আপত্তি মোকাবেলা", max: 20 },
     ],
   },
@@ -325,8 +374,18 @@ const SCORING_CONFIG = {
         bn: "পূর্ববর্তী বক্তার যুক্তি খণ্ডন",
         max: 20,
       },
-      { key: "style", label: "Delivery Style & Expression", bn: "গায়কী উপস্থাপন", max: 20 },
-      { key: "delivery", label: "Pronunciation & Delivery", bn: "উচ্চারণ এবং বাকরীতি", max: 10 },
+      {
+        key: "style",
+        label: "Delivery Style & Expression",
+        bn: "গায়কী উপস্থাপন",
+        max: 20,
+      },
+      {
+        key: "delivery",
+        label: "Pronunciation & Delivery",
+        bn: "উচ্চারণ এবং বাকরীতি",
+        max: 10,
+      },
       { key: "poi", label: "Handling POIs", bn: "আপত্তি মোকাবেলা", max: 10 },
     ],
   },
@@ -335,14 +394,24 @@ const SCORING_CONFIG = {
     bn: "সরকারি যুক্তি খণ্ডন",
     max: 50,
     criteria: [
-      { key: "rebuttal", label: "Rebuttal Arguments", bn: "যুক্তি খণ্ডন", max: 20 },
+      {
+        key: "rebuttal",
+        label: "Rebuttal Arguments",
+        bn: "যুক্তি খণ্ডন",
+        max: 20,
+      },
       {
         key: "summary",
         label: "Strategic Summary / Analysis",
         bn: "সাময়িক বিশ্লেষণ উপস্থাপন",
         max: 20,
       },
-      { key: "cohesion", label: "Team Consistency & Cohesion", bn: "দলীয় সমঝোতা", max: 10 },
+      {
+        key: "cohesion",
+        label: "Team Consistency & Cohesion",
+        bn: "দলীয় সমঝোতা",
+        max: 10,
+      },
     ],
   },
   "Opposition Reply": {
@@ -350,14 +419,24 @@ const SCORING_CONFIG = {
     bn: "বিরোধী যুক্তি খণ্ডন",
     max: 50,
     criteria: [
-      { key: "rebuttal", label: "Rebuttal Arguments", bn: "যুক্তি খণ্ডন", max: 20 },
+      {
+        key: "rebuttal",
+        label: "Rebuttal Arguments",
+        bn: "যুক্তি খণ্ডন",
+        max: 20,
+      },
       {
         key: "summary",
         label: "Strategic Summary / Analysis",
         bn: "সাময়িক বিশ্লেষণ উপস্থাপন",
         max: 20,
       },
-      { key: "cohesion", label: "Team Consistency & Cohesion", bn: "দলীয় সমঝোতা", max: 10 },
+      {
+        key: "cohesion",
+        label: "Team Consistency & Cohesion",
+        bn: "দলীয় সমঝোতা",
+        max: 10,
+      },
     ],
   },
 };
@@ -440,7 +519,9 @@ function readCriteria(container, role) {
       const raw = el ? el.value : "";
       const n = Number(raw);
       if (raw === "" || !Number.isFinite(n) || n < 0 || n > c.max)
-        return { error: `Judge ${j + 1}: ${c.label} must be between 0 and ${c.max} for ${key}.` };
+        return {
+          error: `Judge ${j + 1}: ${c.label} must be between 0 and ${c.max} for ${key}.`,
+        };
       criteria[c.key] = n;
       total += n;
     }
@@ -721,7 +802,11 @@ function fmtDate(date) {
   const d = new Date(date + "T00:00:00");
   return Number.isNaN(d.getTime())
     ? esc(date)
-    : d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+    : d.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
 }
 function notify(message) {
   const el = document.getElementById("toast");
@@ -1035,7 +1120,11 @@ function currentWeekBounds() {
   monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
   const sunday = new Date(monday);
   sunday.setDate(monday.getDate() + 6);
-  return { start: localISODate(monday), end: localISODate(sunday), today: localISODate(now) };
+  return {
+    start: localISODate(monday),
+    end: localISODate(sunday),
+    today: localISODate(now),
+  };
 }
 function sessionType(session) {
   const raw = String(session?.type || "")
@@ -1367,6 +1456,17 @@ function renderResults() {
     : '<div class="empty">No debate results match these filters.</div>';
 }
 
+function calendarNoteMarkup(value) {
+  const notes = String(value || "No additional notes.").trim();
+  const previewLimit = 190;
+  if (notes.length <= previewLimit) return `<p class="info-box">${esc(notes)}</p>`;
+  const preview = notes
+    .slice(0, previewLimit)
+    .replace(/\\s+\\S*$/, "")
+    .trimEnd();
+  return `<details class="calendar-notes"><summary>${esc(preview)}…</summary><p class="info-box">${esc(notes)}</p></details>`;
+}
+
 function renderCalendar() {
   const filter = document.getElementById("calendar-type-filter")?.value || "all",
     dateFilter = document.getElementById("calendar-date-filter")?.value || "all",
@@ -1413,7 +1513,7 @@ function renderCalendar() {
     ? list
         .map(
           (s) =>
-            `<article class="card"><div class="card-top"><span class="green">▦ ${fmtDate(s.date)}</span><span class="pill ${sessionType(s) === "Debate" ? "gold" : sessionType(s) === "Tournament" ? "blue" : ""}">${esc(sessionType(s))}</span></div><h3>${esc(s.title)}</h3><p class="card-meta">📍 ${esc(s.location || "Location to be announced")}</p><p class="info-box">${esc(s.notes || "No additional notes.")}</p>${s.featured === true ? '<p class="pill gold">★ Featured on Home</p>' : ""}${isEditor() ? `<div class="actions"><button class="btn secondary small" onclick="openSessionEditor(${Number(s.id)})">Edit Item</button><button class="btn ${s.featured === true ? "secondary" : "gold"} small" onclick="toggleSessionFeatured(${Number(s.id)})">${s.featured === true ? "Remove Home Feature" : "★ Feature on Home"}</button><button class="btn danger small" onclick="deleteSession(${Number(s.id)})">Delete</button></div>` : ""}</article>`,
+            `<article class="card"><div class="card-top"><span class="green">▦ ${fmtDate(s.date)}</span><span class="pill ${sessionType(s) === "Debate" ? "gold" : sessionType(s) === "Tournament" ? "blue" : ""}">${esc(sessionType(s))}</span></div><h3>${esc(s.title)}</h3><p class="card-meta">📍 ${esc(s.location || "Location to be announced")}</p>${calendarNoteMarkup(s.notes)}${s.featured === true ? '<p class="pill gold">★ Featured on Home</p>' : ""}${isEditor() ? `<div class="actions"><button class="btn secondary small" onclick="openSessionEditor(${Number(s.id)})">Edit Item</button><button class="btn ${s.featured === true ? "secondary" : "gold"} small" onclick="toggleSessionFeatured(${Number(s.id)})">${s.featured === true ? "Remove Home Feature" : "★ Feature on Home"}</button><button class="btn danger small" onclick="deleteSession(${Number(s.id)})">Delete</button></div>` : ""}</article>`,
         )
         .join("")
     : `<div class="empty" style="grid-column:1/-1">No ${filter === "debate" ? "debates" : filter === "events" ? "events or training sessions" : "calendar items"} match these filters. Try changing the date filter or add a calendar item.</div>`;
@@ -2095,7 +2195,11 @@ function renderAdminMemberList() {
       ]
         .join(" ")
         .toLocaleLowerCase();
-      return { member, profiles, matched: !query || searchable.includes(query) };
+      return {
+        member,
+        profiles,
+        matched: !query || searchable.includes(query),
+      };
     })
     .filter((row) => row.matched);
   el.innerHTML = members.length
@@ -2878,7 +2982,10 @@ async function ensureDebater(x) {
   );
   const isNew = !m;
   if (isNew) m = { id: Date.now(), name: x.display_name.trim(), active: true };
-  const { data, error } = await sb.rpc("link_member", { target: x.id, mid: m.id });
+  const { data, error } = await sb.rpc("link_member", {
+    target: x.id,
+    mid: m.id,
+  });
   if (error || data !== true) {
     console.error(error);
     return null;
@@ -2938,7 +3045,9 @@ function exportPortalData() {
     exportedAt: new Date().toISOString(),
     schemaVersion: 3,
   };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }),
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: "application/json",
+    }),
     url = URL.createObjectURL(blob),
     a = document.createElement("a");
   a.href = url;

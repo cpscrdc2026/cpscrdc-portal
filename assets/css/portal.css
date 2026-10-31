@@ -661,7 +661,7 @@ footer {
 .hidden {
   display: none !important;
 }
-@media (max-width: 1000px) {
+@media (max-width: 1100px) {
   .nav-wrap {
     flex-wrap: wrap;
   }
@@ -791,7 +791,9 @@ footer {
 }
 #edit-debate-participants .score-row {
   display: grid;
-  grid-template-columns: minmax(150px, 1.4fr) minmax(150px, 1.2fr) minmax(100px, 0.7fr) auto;
+  grid-template-columns:
+    minmax(150px, 1.4fr) minmax(150px, 1.2fr) minmax(100px, 0.7fr)
+    auto;
   gap: 8px;
   align-items: center;
   background: #f7f8fb;
@@ -1655,31 +1657,13 @@ body.dark .judge-total {
   margin: 0;
   font-size: 17px;
   line-height: 1.55;
-  font-weight: 800;
+  font-weight: 700;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 .glow-text {
   color: var(--tint);
-  text-shadow:
-    0 0 6px var(--glow),
-    0 0 14px var(--glow),
-    0 0 28px var(--glow);
-  animation: achGlow 2.8s ease-in-out infinite alternate;
-}
-@keyframes achGlow {
-  from {
-    text-shadow:
-      0 0 4px var(--glow),
-      0 0 10px var(--glow),
-      0 0 18px var(--glow);
-  }
-  to {
-    text-shadow:
-      0 0 8px var(--glow),
-      0 0 20px var(--glow),
-      0 0 38px var(--glow);
-  }
+  text-shadow: 0 0 5px var(--glow);
 }
 .ach-actions {
   position: relative;
@@ -2109,4 +2093,88 @@ body.dark .member-score-details > summary {
   #page-home .panel {
     padding: 12px;
   }
+}
+
+/* Keep leaderboard filters compact on phones so rankings stay in view. */
+@media (max-width: 640px) {
+  #page-leaderboard > .panel.toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 8px;
+    padding: 12px;
+  }
+  #page-leaderboard > .panel.toolbar > div:first-child {
+    grid-column: 1 / -1;
+  }
+  #page-leaderboard > .panel.toolbar .toolbar-control {
+    display: grid;
+    align-content: start;
+    gap: 4px;
+    width: auto;
+    min-width: 0;
+  }
+  #page-leaderboard > .panel.toolbar .toolbar-control label {
+    font-size: 11px;
+  }
+  #page-leaderboard > .panel.toolbar .toolbar-control .input,
+  #page-leaderboard > .panel.toolbar .toolbar-control select {
+    width: 100%;
+    min-width: 0;
+    padding: 7px 8px;
+    font-size: 12px;
+  }
+}
+
+/* Keep results filters together and preserve their room beside the page heading. */
+@media (min-width: 641px) {
+  #page-results .result-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(145px, 1fr));
+    gap: 8px;
+    width: min(100%, 540px);
+  }
+  #page-results .result-toolbar > * {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* Keep calendar details descriptive while letting readers expand the full notes. */
+.calendar-notes {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--subpanel);
+}
+.calendar-notes > summary {
+  cursor: pointer;
+  padding: 10px 11px;
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.calendar-notes > summary::marker {
+  color: var(--green);
+}
+.calendar-notes > summary::after {
+  content: "Read full description";
+  display: block;
+  margin-top: 6px;
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 750;
+}
+.calendar-notes[open] > summary::after {
+  content: "Hide full description";
+}
+.calendar-notes > .info-box {
+  margin: 0 8px 8px;
+  padding: 8px;
+  border: 0;
+  background: transparent;
+  line-height: 1.5;
+}
+body.dark .calendar-notes > summary::after {
+  color: #4ade80;
 }
