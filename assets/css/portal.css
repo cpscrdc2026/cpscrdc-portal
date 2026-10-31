@@ -2110,3 +2110,35 @@ body.dark .member-score-details > summary {
     padding: 12px;
   }
 }
+
+
+/* Keep leaderboard filters compact on phones so rankings stay in view. */
+@media (max-width: 640px) {
+  #page-leaderboard > .panel.toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 8px;
+    padding: 12px;
+  }
+  #page-leaderboard > .panel.toolbar > div:first-child {
+    grid-column: 1 / -1;
+  }
+  #page-leaderboard > .panel.toolbar .toolbar-control {
+    display: grid;
+    align-content: start;
+    gap: 4px;
+    width: auto;
+    min-width: 0;
+  }
+  #page-leaderboard > .panel.toolbar .toolbar-control label {
+    font-size: 11px;
+  }
+  #page-leaderboard > .panel.toolbar .toolbar-control .input,
+  #page-leaderboard > .panel.toolbar .toolbar-control select {
+    width: 100%;
+    min-width: 0;
+    padding: 7px 8px;
+    font-size: 12px;
+  }
+}
