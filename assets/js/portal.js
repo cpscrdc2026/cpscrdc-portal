@@ -1270,7 +1270,7 @@ function renderLeaderboard() {
     .querySelectorAll(".leaderboard-admin-col,.leaderboard-admin-filter")
     .forEach((el) => el.classList.toggle("hidden", !editor));
   const visibilityNote = document.getElementById("leaderboard-visibility-note");
-  if (visibilityNote) visibilityNote.classList.toggle("hidden", editor);
+  if (visibilityNote) visibilityNote.classList.toggle("hidden", editor || !hasMemberAccess());
   const provisionalPanel = document.getElementById("leaderboard-provisional-panel");
   if (provisionalPanel) provisionalPanel.classList.toggle("hidden", !editor);
   const seasons = [
