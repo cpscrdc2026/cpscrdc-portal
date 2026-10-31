@@ -2588,3 +2588,70 @@ body.dark .nav-btn.active {
   background: #123625;
   color: #a5f3c2;
 }
+
+
+/* Homepage introduction and editor preview. */
+.home-introduction {
+  position: relative;
+  overflow: hidden;
+  border-top: 3px solid var(--gold);
+  background: linear-gradient(135deg, var(--panel), var(--subpanel));
+}
+.home-introduction-copy {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.home-introduction .eyebrow {
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.home-introduction h2 {
+  margin: 8px 0 10px;
+  color: var(--navy);
+  font-size: clamp(21px, 3vw, 30px);
+}
+.home-introduction p {
+  max-width: 760px;
+  margin: 0 auto;
+  line-height: 1.75;
+  white-space: pre-line;
+}
+#admin-sub-homepage .field textarea {
+  min-height: 96px;
+}
+#admin-sub-homepage .panel {
+  background: var(--subpanel);
+}
+#admin-sub-homepage .panel h4 {
+  margin: 0 0 8px;
+}
+#admin-sub-homepage .panel p {
+  white-space: pre-line;
+  line-height: 1.65;
+}
+#admin-sub-homepage .form-actions {
+  justify-content: flex-end;
+}
+@media (max-width: 640px) {
+  .home-introduction {
+    padding: 18px 15px;
+  }
+  .home-introduction h2 {
+    font-size: 20px;
+  }
+  .home-introduction p {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  #admin-sub-homepage .form-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  #admin-sub-homepage .form-actions .btn {
+    width: 100%;
+  }
+}
